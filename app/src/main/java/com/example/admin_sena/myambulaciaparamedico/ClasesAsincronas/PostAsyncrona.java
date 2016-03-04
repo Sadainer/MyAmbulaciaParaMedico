@@ -41,6 +41,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
+        String mensajeRespuesta = null;
         try {
 
 
@@ -55,22 +56,18 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
             dStream.writeBytes(mData);
             dStream.flush();
             dStream.close();
-            int responseCode = connection.getResponseCode();
+            mensajeRespuesta = connection.getResponseMessage();
 
-            final StringBuilder output = new StringBuilder("Request URL " + url);
-            output.append(System.getProperty("line.separator") + "Request Parameters " + mData);
-            output.append(System.getProperty("line.separator") + "Response Code " + responseCode);
-            output.append(System.getProperty("line.separator") + "Type " + "POST");
+
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line = "";
             StringBuilder responseOutput = new StringBuilder();
-            System.out.println("output===============" + br);
+
             while((line = br.readLine()) != null ) {
                 responseOutput.append(line);
             }
             br.close();
-
-            output.append(System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") + responseOutput.toString());
+            System.out.println("output===============" + mensajeRespuesta);
 
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException");
