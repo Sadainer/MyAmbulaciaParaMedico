@@ -35,7 +35,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/edtNombres"
             android:layout_below="@+id/txtNombre"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -46,14 +46,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Apellidos"
             android:id="@+id/txtApellidos"
-            android:layout_below="@+id/etNombres"
+            android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etNombres"
+            android:id="@+id/edtapellidos"
             android:layout_below="@+id/txtNombre"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -64,14 +64,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Correo electrónico"
             android:id="@+id/txtCorreo"
-            android:layout_below="@+id/edtApellidos"
+            android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edtApellidos"
+            android:id="@+id/edtCorreo"
             android:layout_below="@+id/txtApellidos"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
-            android:id="@+id/edtCorreo"
+            android:id="@+id/edtConfirmarCorreo"
             android:layout_below="@+id/txtCorreo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -102,7 +102,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Contraseña"
             android:id="@+id/txtNuevaContraseña"
-            android:layout_below="@+id/edtCorreo"
+            android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
@@ -148,7 +148,7 @@
             android:text="Registrarse"
             android:theme="@style/ButtonNormal"
             android:background="@drawable/selector_boton_normal"
-            android:id="@+id/button"
+            android:id="@+id/btnRegistrarse"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
