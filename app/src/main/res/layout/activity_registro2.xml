@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
-    android:weightSum="1">
-
-<ScrollView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.admin_sena.myambulaciaparamedico.Registro2">
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
+        android:layout_width="376dp"
         android:layout_height="match_parent"
         android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +27,7 @@
             android:text="Nombres"
             android:id="@+id/txtNombre"
             android:layout_below="@+id/edtUsuarionuevo"
-           android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
         <EditText
@@ -42,7 +46,6 @@
             android:id="@+id/txtApellidos"
             android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentStart="true" />
 
         <EditText
@@ -61,7 +64,6 @@
             android:id="@+id/txtCorreo"
             android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentStart="true" />
 
         <EditText
@@ -80,7 +82,6 @@
             android:id="@+id/txtNuevoUsuario"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentStart="true" />
 
         <EditText
@@ -101,7 +102,6 @@
             android:id="@+id/txtNuevaContraseña"
             android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentStart="true" />
 
         <EditText
@@ -122,7 +122,6 @@
             android:id="@+id/txtRepetirContraseña"
             android:layout_below="@+id/edtNuevaContraseña"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentStart="true" />
 
         <EditText
@@ -134,12 +133,6 @@
             android:layout_below="@+id/txtRepetirContraseña"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.61"></TableRow>
 
         <Button
             android:layout_width="251dp"
@@ -154,5 +147,9 @@
             android:layout_weight="0.11"
             android:textColor="#ffffff" />
     </LinearLayout>
-</ScrollView>
-</LinearLayout>
+
+
+
+
+
+</RelativeLayout>
