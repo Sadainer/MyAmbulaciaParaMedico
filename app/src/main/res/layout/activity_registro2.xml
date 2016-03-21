@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Nombres"
+            android:text="Nombres y Apellidos"
             android:id="@+id/txtNombre"
             android:layout_below="@+id/edtUsuarionuevo"
             android:layout_alignParentLeft="true"
@@ -42,8 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Apellidos"
-            android:id="@+id/txtApellidos"
+            android:text="Cedula"
+            android:id="@+id/txtCedula"
             android:layout_below="@+id/edtConfirmarCorreo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -51,7 +51,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edtapellidos"
+            android:id="@+id/edtCedula"
             android:layout_below="@+id/txtNombre"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edtCorreo"
-            android:layout_below="@+id/txtApellidos"
+            android:layout_below="@+id/txtCedula"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
