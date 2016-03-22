@@ -1,5 +1,6 @@
 package com.example.admin_sena.myambulaciaparamedico;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
@@ -24,6 +26,7 @@ public class Registro2 extends AppCompatActivity {
     String Contraseña;
     String ConfirmarContraseña;
     Gson Registrojson;
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +57,9 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
                 editor.putString("Apellidos",Apellidos);
                 editor.putString("Cedula",Cedula);
                 editor.putString("Correo",Correo);
-                editor.putString("Contraseña",Contraseña);
+                editor.putString("Contraseña", Contraseña);
                 editor.commit();
+                // Crear nuevo objeto RegistroDto
                 RegistroDto NuevoRegistro = new RegistroDto();
                 NuevoRegistro.setNombres(Nombres);
                 NuevoRegistro.setApellidos(Apellidos);
@@ -63,8 +67,13 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
                 NuevoRegistro.setCedula(Cedula);
                 NuevoRegistro.setContraseña(Contraseña);
 
-    //            PostAsyncrona EnviarRegistro = new PostAsyncrona()
+                //Enviar registro al servidor aqui
 
+              //  PostAsyncrona EnviarRegistro = new PostAsyncrona(Registrojson.toJson(NuevoRegistro),context,new PostAsyncrona.AsyncResponse());
+
+
+
+                //Volver al login
                 Intent volver_a_login = new Intent(Registro2.this,LoginActivity.class);
                 startActivity(volver_a_login);
             }

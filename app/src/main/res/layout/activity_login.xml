@@ -87,13 +87,6 @@
                 android:background="@drawable/selector_boton_normal"
                 android:textColor="#ffffff" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mostrar"
-                android:id="@+id/btnMostrar"
-                android:layout_gravity="center_horizontal" />
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

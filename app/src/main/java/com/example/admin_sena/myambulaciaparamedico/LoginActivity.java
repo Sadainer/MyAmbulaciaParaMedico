@@ -32,6 +32,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin_sena.myambulaciaparamedico.Dto.LoginDto;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
         Button login = (Button) findViewById(R.id.btnLogin);
         Button Registrar = (Button) findViewById(R.id.btnRegistro);
-        Button Mostrar = (Button)findViewById(R.id.btnMostrar);
         final SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
         final String Cedulapref = registro.getString("Cedula", "2");
         final String contraseñapref = registro.getString("Contraseña","123");
@@ -99,25 +100,6 @@ intentoLogin(Cedulapref,contraseñapref);
 });
 
     }
-     /*
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-*/
-
-//        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-  //          @Override
-    //        public void onClick(View view) {
-      //          attemptLogin();
-        //    }
-       // });
 
 
     private void intentoLogin(String Cedulapref,String contraseñapref) {
@@ -129,6 +111,13 @@ intentoLogin(Cedulapref,contraseñapref);
 
         String Cedula= CedulaView.getText().toString();
         String Contraseña= ContraseñaView.getText().toString();
+// Crear Objeto loginDto con los datos que el usuario ingresó
+        LoginDto login = new LoginDto();
+        login.setContraseña(Contraseña);
+        login.setCedula(Cedula);
+
+        //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
+
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(Contraseña) && !contraseñaValida(Contraseña)){
@@ -164,12 +153,12 @@ intentoLogin(Cedulapref,contraseñapref);
     }
 
     private boolean cedulaValida(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("1");
+
+                return email.contains("1");
     }
 
     private boolean contraseñaValida(String pass) {
-        //TODO: Replace this with your own logic
+
         return pass.length() > 4;
     }
 

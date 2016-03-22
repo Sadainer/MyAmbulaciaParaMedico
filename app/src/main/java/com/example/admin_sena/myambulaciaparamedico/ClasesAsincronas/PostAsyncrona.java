@@ -23,6 +23,10 @@ import java.net.URL;
  */
 public class PostAsyncrona extends AsyncTask<String, Void, Void> {
 
+    public interface AsyncResponse {
+        void processFinish(String output);
+    }
+    public AsyncResponse delegate = null;
     private String mData = null;
     URL url;
     HttpURLConnection connection;
@@ -30,6 +34,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
 
     public PostAsyncrona(String data, Context context) {
         mData = data;
+        this.delegate = delegate;
         cnt= context;
     }
     public void execute() {
