@@ -38,7 +38,7 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/cedula"
+                    android:hint="@string/cedula_login"
                     android:inputType="number"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -86,6 +86,13 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/selector_boton_normal"
                 android:textColor="#ffffff" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mostrar"
+                android:id="@+id/btnMostrar"
+                android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
     </ScrollView>

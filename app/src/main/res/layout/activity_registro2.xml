@@ -20,120 +20,101 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"></LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Nombres y Apellidos"
-            android:id="@+id/txtNombre"
-            android:layout_below="@+id/edtUsuarionuevo"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edtNombres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/st_nombres"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edtNombres"
-            android:layout_below="@+id/txtNombre"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:inputType="text"
+            android:ems="10"
+            android:id="@+id/edtApellidos"
+            android:hint="@string/st_apellidos"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Cedula"
-            android:id="@+id/txtCedula"
-            android:layout_below="@+id/edtConfirmarCorreo"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <EditText
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content">
+        <EditText
             android:id="@+id/edtCedula"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_cedula_registro"
+            android:inputType="number"
             android:layout_below="@+id/txtNombre"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Correo electrónico"
-            android:id="@+id/txtCorreo"
-            android:layout_below="@+id/edtConfirmarCorreo"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edtCorreo"
+            android:inputType="textEmailAddress"
             android:layout_below="@+id/txtCedula"
+            android:hint="@string/st_correo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+        </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Confirmar correo electronico"
-            android:id="@+id/txtNuevoUsuario"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
+            android:hint="@string/st_confirmar_correo"
             android:id="@+id/edtConfirmarCorreo"
             android:layout_below="@+id/txtCorreo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Contraseña"
-            android:id="@+id/txtNuevaContraseña"
-            android:layout_below="@+id/edtConfirmarCorreo"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
+            android:hint="@string/st_contraseña"
             android:id="@+id/edtNuevaContraseña"
             android:layout_below="@+id/txtNuevaContraseña"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Repetir Contraseña"
-            android:id="@+id/txtRepetirContraseña"
-            android:layout_below="@+id/edtNuevaContraseña"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
+            android:hint="@string/st_confirmar_contraseña"
             android:id="@+id/edtRepetircontraseña"
             android:layout_below="@+id/txtRepetirContraseña"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
+        </android.support.design.widget.TextInputLayout>
         <Button
             android:layout_width="251dp"
             android:layout_height="wrap_content"

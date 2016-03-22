@@ -4,7 +4,7 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings relacionados con el login -->
-    <string name="cedula">Usuario</string>
+    <string name="cedula_login">Usuario</string>
 
     <string name="contraseña">Contraseña</string>
     <string name="registro1">Registro</string>
@@ -13,10 +13,17 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="error_field_required">Este campo es obligatorio</string>
+
     <string name="usuario">name usuario</string>
     <string name="Usuario">Usuario</string>
+    <!-- Strings Registro -->
+    <string name="st_nombres">Nombres</string>
+    <string name="st_apellidos">Apellidos</string>
+    <string name="st_cedula_registro">Cedula</string>
+    <string name="st_correo">Correo</string>
+    <string name="st_confirmar_correo">Confirmar Correo</string>
+    <string name="st_contraseña">Contraseña</string>
+    <string name="st_confirmar_contraseña">Confirmar Contraseña</string>
+
 </resources>

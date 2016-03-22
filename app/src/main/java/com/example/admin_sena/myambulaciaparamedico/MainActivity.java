@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         //Intent i = new Intent(this, ServicioMyAmbu.class);
         //this.startService(i);
         //System.out.println("Servicio Iniciado");
-        Intent i = new Intent(MainActivity.this, Registro2.class);
+        Intent i = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(i);
 //        try {
 //            String Res = new GetAsyncrona().execute("http://rest-service.guides.spring.io/greeting").get();
