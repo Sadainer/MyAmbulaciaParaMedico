@@ -41,15 +41,17 @@ public class ServicioMyAmbu extends Service {
     // Variables de URI del servicio
     private static String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
     //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION=10;
+    private static int TIEMPO_ACTUALIZACION=10000;
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION=1;
+    private static int RADIO_ACTUALIZACION=10;
     //Listener de ubicacion
     private LocationListener locationListener = null;
 
     private static final int NOTIF_ALERTA_ID = 1;
 
     final Gson gsson = new Gson();
+
+    NotificationManager nm ;
 
     public ServicioMyAmbu() {
     }
@@ -69,6 +71,7 @@ public class ServicioMyAmbu extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
+        nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
@@ -125,37 +128,12 @@ public class ServicioMyAmbu extends Service {
 
     }
 
-    // Notifica sobre GPS desactivado y envia para activacion
-    protected void displayNotification(){
-        int notificationID = 1;
-        Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-        myIntent.putExtra("notificationID", notificationID);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(cnt, 0, myIntent, 0);
-        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
-        CharSequence ticker ="Activar GPS";
-        CharSequence contentTitle = "MyAmbu";
-        CharSequence contentText = "GPS Desactivado";
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Notification noti = new NotificationCompat.Builder(cnt)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setTicker(ticker)
-                .setContentTitle(contentTitle)
-                .setContentText(contentText)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .addAction(R.drawable.ic_setting_dark, ticker, pendingIntent)
-                .setVibrate(new long[] {100, 250, 100, 500})
-                .setSound(alarmSound)
-                .build();
-        nm.notify(notificationID, noti);
-    }
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
     {
-
+        int notificationID = 1;
         @Override
         public void onLocationChanged(Location location) {
 
@@ -169,14 +147,42 @@ public class ServicioMyAmbu extends Service {
 
         @Override
         public void onProviderEnabled(String provider) {
-            cnt.startService(new Intent(cnt, ServicioMyAmbu.class));
+
+            nm.cancel(notificationID);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
 
             displayNotification();
-            cnt.stopService(new Intent(cnt, ServicioMyAmbu.class));
+
+        }
+
+        // Notifica sobre GPS desactivado y envia para activacion
+        protected void displayNotification(){
+
+            Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
+            myIntent.putExtra("notificationID", notificationID);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(cnt, 0, myIntent, 0);
+
+
+            CharSequence ticker ="Activar GPS";
+            CharSequence contentTitle = "MyAmbu";
+            CharSequence contentText = "GPS Desactivado";
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Notification noti = new NotificationCompat.Builder(cnt)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setTicker(ticker)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .addAction(R.drawable.ic_setting_dark, ticker, pendingIntent)
+                    .setVibrate(new long[] {100, 250, 100, 500})
+                    .setSound(alarmSound)
+                    .build();
+            nm.notify(notificationID, noti);
         }
 
     }
