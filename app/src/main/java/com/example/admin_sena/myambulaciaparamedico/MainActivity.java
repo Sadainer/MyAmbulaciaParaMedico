@@ -26,11 +26,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Intent i = new Intent(this, ServicioMyAmbu.class);
-        //this.startService(i);
+        Intent i = new Intent(this, ServicioMyAmbu.class);
+        this.startService(i);
         //System.out.println("Servicio Iniciado");
-        Intent i = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(i);
+      Toast.makeText(this,"Servicio iniciado",Toast.LENGTH_SHORT).show();
+        Intent a = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(a);
 //        try {
 //            String Res = new GetAsyncrona().execute("http://rest-service.guides.spring.io/greeting").get();
 //            Toast.makeText(this,Res.toString(),Toast.LENGTH_LONG).show();
