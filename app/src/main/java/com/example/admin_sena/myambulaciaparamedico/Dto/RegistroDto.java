@@ -8,7 +8,7 @@ public class RegistroDto {
     private String Apellidos;
     private String Cedula;
     private String Correo;
-    private String Contraseña;
+    private String Password;
 
     public String getNombres() {
         return Nombres;
@@ -26,8 +26,12 @@ public class RegistroDto {
         return Correo;
     }
 
-    public String getContraseña() {
-        return Contraseña;
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String password) {
+        Password = password;
     }
 
     public void setNombres(String nombres) {
@@ -44,9 +48,5 @@ public class RegistroDto {
 
     public void setCorreo(String correo) {
         Correo = correo;
-    }
-
-    public void setContraseña(String contraseña) {
-        Contraseña = contraseña;
     }
 }
