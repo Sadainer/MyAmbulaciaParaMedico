@@ -65,7 +65,7 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
                 NuevoRegistro.setApellidos(Apellidos);
                 NuevoRegistro.setCorreo(Correo);
                 NuevoRegistro.setCedula(Cedula);
-                NuevoRegistro.setContraseña(Contraseña);
+                NuevoRegistro.setPassword(Contraseña);
 
                 //Enviar registro al servidor aqui
 
