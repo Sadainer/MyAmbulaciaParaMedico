@@ -86,6 +86,7 @@ public void EnviarRegistro (RegistroDto registroDto){
     PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), context, new PostAsyncrona.AsyncResponse() {
         @Override
         public void processFinish(String output) {
+Toast.makeText(context,"Registro Exitoso",Toast.LENGTH_SHORT).show();
 
         }
     });
