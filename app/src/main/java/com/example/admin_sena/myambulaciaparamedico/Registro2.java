@@ -69,7 +69,7 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
 
                 //Enviar registro al servidor aqui
 
-              //  PostAsyncrona EnviarRegistro = new PostAsyncrona(Registrojson.toJson(NuevoRegistro),context,new PostAsyncrona.AsyncResponse());
+                EnviarRegistro(NuevoRegistro);
 
 
 
@@ -81,7 +81,15 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
 
     }
 
+public void EnviarRegistro (RegistroDto registroDto){
 
+    PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), context, new PostAsyncrona.AsyncResponse() {
+        @Override
+        public void processFinish(String output) {
+
+        }
+    });
+}
 
 
 
