@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -23,6 +25,8 @@ import java.net.URL;
  */
 public class PostAsyncrona extends AsyncTask<String, Void, Void> {
 
+
+
     public interface AsyncResponse {
         void processFinish(String output);
     }
@@ -32,7 +36,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
     HttpURLConnection connection;
     Context cnt;
 
-    public PostAsyncrona(String data, Context context) {
+    public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
         this.delegate = delegate;
         cnt= context;

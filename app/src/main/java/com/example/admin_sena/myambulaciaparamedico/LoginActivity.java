@@ -3,6 +3,7 @@ package com.example.admin_sena.myambulaciaparamedico;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -32,10 +33,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.LoginDto;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static android.Manifest.permission.INTERNET;
 import static android.Manifest.permission.READ_CONTACTS;
@@ -61,8 +65,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText ContraseñaView;
     private View mProgressView;
     private View mLoginFormView;
+    private Gson loginjson = new Gson();
 
-
+Context context;
+    private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedico";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +124,23 @@ intentoLogin(Cedulapref,contraseñapref);
 
         //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
 
+        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
+    @Override
+    public void processFinish(String output) {
+Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
+    }
+});
+
+        try {
+            EnviarLogin.execute(DIR_URL).get();
+            //System.out.println(resultado);
+        } catch (InterruptedException e) {
+            System.out.println("Error i");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.out.println("Error e");
+            e.printStackTrace();
+        }
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(Contraseña) && !contraseñaValida(Contraseña)){
@@ -137,6 +160,7 @@ intentoLogin(Cedulapref,contraseñapref);
             cancel = true;
         }else {
             if(Cedula.matches(Cedulapref)&& Contraseña.matches(contraseñapref)){
+                // Cedula y contraseña validas, pasar a Mapas
                 Intent w = new Intent(LoginActivity.this,MapsActivity.class);
                 startActivity(w);
             }else { Toast.makeText(LoginActivity.this,"Cedula o contraseña no validas",Toast.LENGTH_SHORT).show(); }

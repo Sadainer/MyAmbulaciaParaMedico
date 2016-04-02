@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
 import com.google.gson.Gson;
+
+import java.util.concurrent.ExecutionException;
 
 public class Registro2 extends AppCompatActivity {
 
@@ -25,7 +28,8 @@ public class Registro2 extends AppCompatActivity {
     String ConfirmarCorreo;
     String Contraseña;
     String ConfirmarContraseña;
-    Gson Registrojson;
+    Gson Registrojson = new Gson();
+    private static String DIR_URL = "http://190.109.185.138:8013/api/paramedicos";
     Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,32 +49,25 @@ public class Registro2 extends AppCompatActivity {
             public void onClick(View v) {
 SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
-                Nombres = edtNombres.getText().toString();
-                Apellidos = edtApellidos.getText().toString();
-                Cedula = edtCedula.getText().toString();
-                Correo = edtCorreo.getText().toString();
-                ConfirmarCorreo = edtConfirmarCorreo.getText().toString();
-                Contraseña = edtNuevaContraseña.getText().toString();
-                ConfirmarContraseña = edtConfirmarContraseña.getText().toString();
+                RegistroDto registro = new RegistroDto();
+                registro.setNombres(edtNombres.getText().toString());
+                registro.setCedula(edtCedula.getText().toString());
+                registro.setApellidos(edtApellidos.getText().toString());
+                registro.setCorreo(edtCorreo.getText().toString());
+                registro.setPassword(edtNuevaContraseña.getText().toString());
 
-                editor.putString("Nombres", Nombres);
-                editor.putString("Apellidos",Apellidos);
-                editor.putString("Cedula",Cedula);
-                editor.putString("Correo",Correo);
-                editor.putString("Contraseña", Contraseña);
+
+
+                editor.putString("Nombres", registro.getNombres());
+                editor.putString("Apellidos", Apellidos);
+                editor.putString("Cedula", registro.getCedula());
+                editor.putString("Correo", Correo);
+                editor.putString("Contraseña", registro.getPassword());
                 editor.commit();
-                // Crear nuevo objeto RegistroDto
-                RegistroDto NuevoRegistro = new RegistroDto();
-                NuevoRegistro.setNombres(Nombres);
-                NuevoRegistro.setApellidos(Apellidos);
-                NuevoRegistro.setCorreo(Correo);
-                NuevoRegistro.setCedula(Cedula);
-                NuevoRegistro.setPassword(Contraseña);
 
                 /////Enviar registro al servidor aqui
 
-                EnviarRegistro(NuevoRegistro);
-
+                EnviarRegistro(registro);
 
 
                 //Volver al login
@@ -83,6 +80,7 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
 
 public void EnviarRegistro (RegistroDto registroDto){
 
+    Log.e("Prueba", Registrojson.toJson(registroDto));
     PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), context, new PostAsyncrona.AsyncResponse() {
         @Override
         public void processFinish(String output) {
@@ -90,8 +88,16 @@ Toast.makeText(context,"Registro Exitoso",Toast.LENGTH_SHORT).show();
 
         }
     });
+    try {
+        Enviar.execute(DIR_URL).get();
+    } catch (InterruptedException e) {
+        System.out.println("Error i");
+        e.printStackTrace();
+    } catch (ExecutionException e) {
+        System.out.println("Error e");
+        e.printStackTrace();
+    }
+
 }
-
-
 
 }

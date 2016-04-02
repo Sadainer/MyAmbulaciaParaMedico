@@ -113,7 +113,12 @@ public class ServicioMyAmbu extends Service {
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
 
-        PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion),cnt);
+        PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+
+            }
+        });
         System.out.println(gsson.toJson(ubicacion));
         try {
             EnviarUbicacion.execute(DIR_URL).get();
