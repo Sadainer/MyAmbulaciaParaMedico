@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.admin_sena.myambulaciaparamedico.Registro2">
+
+    <ScrollView
+        android:id="@+id/registro_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="376dp"
+            android:layout_height="match_parent"
+            android:weightSum="1"
+            android:id="@+id/linearLayout">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/edtNombres"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/st_nombres"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:ems="10"
+                android:id="@+id/edtApellidos"
+                android:hint="@string/st_apellidos"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/edtCedula"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/st_cedula_registro"
+                    android:inputType="number"
+                    android:layout_below="@+id/txtNombre"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edtCorreo"
+                    android:inputType="textEmailAddress"
+                    android:layout_below="@+id/txtCedula"
+                    android:hint="@string/st_correo"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:ems="10"
+                    android:hint="@string/st_confirmar_correo"
+                    android:id="@+id/edtConfirmarCorreo"
+                    android:layout_below="@+id/txtCorreo"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:hint="@string/st_contraseña"
+                    android:id="@+id/edtNuevaContraseña"
+                    android:layout_below="@+id/txtNuevaContraseña"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:hint="@string/st_confirmar_contraseña"
+                    android:id="@+id/edtRepetircontraseña"
+                    android:layout_below="@+id/txtRepetirContraseña"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+            </android.support.design.widget.TextInputLayout>
+            <Button
+                android:layout_width="251dp"
+                android:layout_height="wrap_content"
+                android:text="Registrarse"
+                android:theme="@style/ButtonNormal"
+                android:background="@drawable/selector_boton_normal"
+                android:id="@+id/btnRegistrarse"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.11"
+                android:textColor="#ffffff" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+
+
+
+
+
+
+
+
+</RelativeLayout>
+
+

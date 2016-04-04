@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,6 +20,8 @@ import java.net.URL;
  * Clase para consumir servicios rest mediante el metodo GET
  */
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
+
+
 
     public interface AsyncResponse {
         void processFinish(String output);

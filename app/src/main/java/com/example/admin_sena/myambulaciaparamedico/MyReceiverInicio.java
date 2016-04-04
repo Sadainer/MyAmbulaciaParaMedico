@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+
 public class MyReceiverInicio extends BroadcastReceiver {
     public MyReceiverInicio() {
     }
