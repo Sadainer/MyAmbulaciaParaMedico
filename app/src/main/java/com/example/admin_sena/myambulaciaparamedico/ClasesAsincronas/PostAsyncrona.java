@@ -5,48 +5,60 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 /**
  * Created by Sadainer Hernandez on 09/03/2015.
  * Clase para consumir servicios rest mediante el metodo GET
  */
-public class PostAsyncrona extends AsyncTask<String, Void, Void> {
+public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     public interface AsyncResponse {
         void processFinish(String output);
     }
+
     public AsyncResponse delegate = null;
     private String mData = null;
     URL url;
     HttpURLConnection connection;
     Context cnt;
+    private ProgressDialog prgEnviando;
 
-    public PostAsyncrona(String data, Context context) {
+
+    public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
-        this.delegate = delegate;
         cnt= context;
+        this.delegate = delegate;
+        prgEnviando = new ProgressDialog(context);
     }
     public void execute() {
         // TODO Auto-generated method stub
+
     }
 
 
     //Variable ruta se guarda la URI del servicio GET a consumir
 
+
     @Override
-    protected Void doInBackground(String... params) {
-        String mensajeRespuesta = null;
+    protected void onPreExecute() {
+
+
+        this.prgEnviando.setTitle("MyAmbu");
+        this.prgEnviando.setMessage("Enviando ...");
+        this.prgEnviando.show();
+
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+        String mensajeRespuesta = "";
         try {
 
 
@@ -61,18 +73,26 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
             dStream.writeBytes(mData);
             dStream.flush();
             dStream.close();
-            mensajeRespuesta = connection.getResponseMessage();
 
+            //Read
+            StringBuilder sb = null;
+            BufferedReader br = null;
+            //here is the problem
+            int responseCode=connection.getResponseCode();
+            if(responseCode==HttpURLConnection.HTTP_OK){
+                String line;
+                sb = new StringBuilder();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line = "";
-            StringBuilder responseOutput = new StringBuilder();
+                InputStream is = connection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+                br = new BufferedReader(isr);
 
-            while((line = br.readLine()) != null ) {
-                responseOutput.append(line);
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
             }
-            br.close();
-            System.out.println("output===============" + mensajeRespuesta);
+            mensajeRespuesta = sb.toString();
 
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException");
@@ -83,11 +103,12 @@ public class PostAsyncrona extends AsyncTask<String, Void, Void> {
             System.out.println("IOException");
             e.printStackTrace();
         }
-        return null;
+        return mensajeRespuesta;
     }
 
-    public void onPostExecute(Void result) {
-        super.onPostExecute(result);
-        //Se retorna un string que contiene un JSON con los datos obtenidos
+    @Override
+    protected void onPostExecute(String result) {
+        delegate.processFinish(result);
+        this.prgEnviando.dismiss();
     }
 }
