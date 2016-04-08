@@ -116,9 +116,7 @@ String Contraseña = ContraseñaView.getText().toString();
         String Cedula= CedulaView.getText().toString();
 
 // Crear Objeto loginDto con los datos que el usuario ingresó
-        LoginDto login = new LoginDto();
-        login.setPassword(ContraseñaView.getText().toString());
-        login.setCedula(CedulaView.getText().toString());
+
 
         //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
 
@@ -159,7 +157,11 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
             cancel = true;
         }else {
             if(Cedula.matches(Cedulapref)&& Contraseña.matches(contraseñapref)) {
-                Log.e("ObjetoLoginDto",loginjson.toJson(login));
+
+                LoginDto login = new LoginDto();
+                login.setPassword(ContraseñaView.getText().toString());
+                login.setCedula(CedulaView.getText().toString());
+                Log.e("ObjetoLoginDto", loginjson.toJson(login));
                EnviarLogin(login);
                 // Cedula y contraseña validas, pasar a Mapas
   //              Intent w = new Intent(LoginActivity.this,MapsActivity.class);
@@ -195,7 +197,8 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
 
             @Override
     public void processFinish(String output) {
-Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
+//Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
+Log.e("output",output);
     }
 });
 
@@ -209,7 +212,6 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
             System.out.println("Error e");
             e.printStackTrace();
         }
-
     }
 
 /*
