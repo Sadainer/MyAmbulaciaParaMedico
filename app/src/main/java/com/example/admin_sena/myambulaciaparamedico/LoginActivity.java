@@ -64,13 +64,19 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private Gson loginjson = new Gson();
-
+    final SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
     Context context;
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedico";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        if (registro.getString("Cedula","") != null && registro.getString("Contraseña","")!= null){
+            setContentView(R.layout.activity_login);
+        }else
+        {
+            Intent c = new Intent(LoginActivity.this,Registro2.class);
+            startActivity(c);
+        }
         // Set up the login form.
         CedulaView = (AutoCompleteTextView) findViewById(R.id.email);
 
