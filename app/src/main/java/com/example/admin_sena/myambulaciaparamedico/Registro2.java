@@ -19,15 +19,6 @@ import java.util.concurrent.ExecutionException;
 
 public class Registro2 extends AppCompatActivity {
 
-
-
-    String Nombres;
-    String Apellidos;
-    String Cedula;
-    String Correo;
-    String ConfirmarCorreo;
-    String Contraseña;
-    String ConfirmarContraseña;
     Gson Registrojson = new Gson();
     private static String DIR_URL = "http://190.109.185.138:8013/api/paramedicos";
     Context context;
@@ -47,29 +38,24 @@ public class Registro2 extends AppCompatActivity {
         btnRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                RegistroDto registro = new RegistroDto();
-                registro.setNombres(edtNombres.getText().toString());
-                registro.setCedula(edtCedula.getText().toString());
-                registro.setApellidos(edtApellidos.getText().toString());
-                registro.setCorreo(edtCorreo.getText().toString());
-                registro.setPassword(edtNuevaContraseña.getText().toString());
 
+                if ((edtCorreo.getText().toString().equals(edtConfirmarCorreo.getText().toString())) &&
+                        (edtNuevaContraseña.getText().toString().equals(edtConfirmarContraseña.getText().toString())) )
+                {
+                    RegistroDto registro = new RegistroDto();
+                    registro.setNombres(edtNombres.getText().toString());
+                    registro.setCedula(edtCedula.getText().toString());
+                    registro.setApellidos(edtApellidos.getText().toString());
+                    registro.setCorreo(edtCorreo.getText().toString());
+                    registro.setPassword(edtNuevaContraseña.getText().toString());
 
+                    /////Enviar registro al servidor aqui
 
-                editor.putString("Nombres", registro.getNombres());
-                editor.putString("Apellidos", Apellidos);
-                editor.putString("Cedula", registro.getCedula());
-                editor.putString("Correo", Correo);
-                editor.putString("Contraseña", registro.getPassword());
-                editor.commit();
+                    EnviarRegistro(registro);
 
-                /////Enviar registro al servidor aqui
+                    Log.e("Registto",Registrojson.toJson(registro));
+                }
 
-                //EnviarRegistro(registro);
-
-Log.e("RegistroDto",Registrojson.toJson(registro));
                 //Volver al login
                 //Intent volver_a_login = new Intent(Registro2.this,LoginActivity.class);
                 //startActivity(volver_a_login);
@@ -84,7 +70,16 @@ public void EnviarRegistro (RegistroDto registroDto){
     PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), context, new PostAsyncrona.AsyncResponse() {
         @Override
         public void processFinish(String output) {
-Toast.makeText(context,"Registro Exitoso",Toast.LENGTH_SHORT).show();
+//            SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
+//            SharedPreferences.Editor editor = prefs.edit();
+//            RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
+//            editor.putString("Nombres", paramedico.getNombres());
+//            editor.putString("Apellidos", paramedico.getApellidos());
+//            editor.putString("Cedula", paramedico.getCedula());
+//            editor.putString("Correo", paramedico.getCorreo());
+//            editor.putString("Contraseña", paramedico.getPassword());
+//            editor.commit();
+        Toast.makeText(context,output,Toast.LENGTH_SHORT).show();
 
         }
     });
