@@ -67,7 +67,7 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
 
                 /////Enviar registro al servidor aqui
 
-                EnviarRegistro(registro);
+                //EnviarRegistro(registro);
 
 Log.e("RegistroDto",Registrojson.toJson(registro));
                 //Volver al login

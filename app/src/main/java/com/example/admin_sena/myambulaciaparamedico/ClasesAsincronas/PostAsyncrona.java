@@ -34,12 +34,11 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     Context cnt;
     private ProgressDialog prgEnviando;
 
-
     public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
         cnt= context;
         this.delegate = delegate;
-        prgEnviando = new ProgressDialog(context);
+       // prgEnviando = new ProgressDialog(context);
     }
     public void execute() {
         // TODO Auto-generated method stub
@@ -53,11 +52,11 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     @Override
     protected void onPreExecute() {
 
-
+/*
         this.prgEnviando.setTitle("MyAmbu");
         this.prgEnviando.setMessage("Enviando ...");
         this.prgEnviando.show();
-
+*/
     }
 
     @Override
@@ -113,6 +112,6 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         delegate.processFinish(result);
-        this.prgEnviando.dismiss();
+  //      this.prgEnviando.dismiss();
     }
 }
