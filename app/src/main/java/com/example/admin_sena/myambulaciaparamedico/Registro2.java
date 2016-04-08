@@ -69,10 +69,10 @@ SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
 
                 EnviarRegistro(registro);
 
-
+Log.e("RegistroDto",Registrojson.toJson(registro));
                 //Volver al login
-                Intent volver_a_login = new Intent(Registro2.this,LoginActivity.class);
-                startActivity(volver_a_login);
+                //Intent volver_a_login = new Intent(Registro2.this,LoginActivity.class);
+                //startActivity(volver_a_login);
             }
         });
 

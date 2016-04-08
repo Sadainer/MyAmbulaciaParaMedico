@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,10 +52,7 @@ public class LoginActivity extends AppCompatActivity {
      */
  //   private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
+
    // private static final String[] DUMMY_CREDENTIALS = new String[]{
      //       "foo@example.com:hello", "bar@example.com:world"
    // };
@@ -67,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     private Gson loginjson = new Gson();
 
-Context context;
+    Context context;
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedico";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +122,9 @@ intentoLogin(Cedulapref,contraseñapref);
 
         //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
 
-        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
-    @Override
+        /*PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
+
+            @Override
     public void processFinish(String output) {
 Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
     }
@@ -141,7 +140,7 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
             System.out.println("Error e");
             e.printStackTrace();
         }
-
+*/
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(Contraseña) && !contraseñaValida(Contraseña)){
             ContraseñaView.setError(getString(R.string.error_invalid_password));
@@ -160,9 +159,11 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
             cancel = true;
         }else {
             if(Cedula.matches(Cedulapref)&& Contraseña.matches(contraseñapref)){
+            Log.e("ObjetoLoginDto",loginjson.toJson(login));
+            EnviarLogin(login);
                 // Cedula y contraseña validas, pasar a Mapas
-                Intent w = new Intent(LoginActivity.this,MapsActivity.class);
-                startActivity(w);
+  //              Intent w = new Intent(LoginActivity.this,MapsActivity.class);
+    //            startActivity(w);
             }else { Toast.makeText(LoginActivity.this,"Cedula o contraseña no validas",Toast.LENGTH_SHORT).show(); }
             //No hubo errores
 
@@ -184,6 +185,31 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
     private boolean contraseñaValida(String pass) {
 
         return pass.length() > 4;
+    }
+
+
+    private void EnviarLogin(LoginDto login){
+
+
+        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
+
+            @Override
+    public void processFinish(String output) {
+Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
+    }
+});
+
+        try {
+            EnviarLogin.execute(DIR_URL).get();
+            //System.out.println(resultado);
+        } catch (InterruptedException e) {
+            System.out.println("Error i");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.out.println("Error e");
+            e.printStackTrace();
+        }
+
     }
 
 /*

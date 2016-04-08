@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     //    Intent i = new Intent(this, ServicioMyAmbu.class);
       //  this.startService(i);
         //System.out.println("Servicio Iniciado");
-      Toast.makeText(this,"Servicio iniciado",Toast.LENGTH_SHORT).show();
+   //   Toast.makeText(this,"Servicio iniciado",Toast.LENGTH_SHORT).show();
         Intent a = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(a);
 //        try {
