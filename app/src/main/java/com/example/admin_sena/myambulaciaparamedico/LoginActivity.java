@@ -112,13 +112,13 @@ intentoLogin(Cedulapref,contraseñapref);
         CedulaView.setError(null);
         boolean cancel = false;
         View focusView = null;
-
+String Contraseña = ContraseñaView.getText().toString();
         String Cedula= CedulaView.getText().toString();
-        String Contraseña= ContraseñaView.getText().toString();
+
 // Crear Objeto loginDto con los datos que el usuario ingresó
         LoginDto login = new LoginDto();
-        login.setContraseña(Contraseña);
-        login.setCedula(Cedula);
+        login.setPassword(ContraseñaView.getText().toString());
+        login.setCedula(CedulaView.getText().toString());
 
         //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
 
@@ -158,9 +158,9 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
             focusView = CedulaView;
             cancel = true;
         }else {
-            if(Cedula.matches(Cedulapref)&& Contraseña.matches(contraseñapref)){
-            Log.e("ObjetoLoginDto",loginjson.toJson(login));
-            EnviarLogin(login);
+            if(Cedula.matches(Cedulapref)&& Contraseña.matches(contraseñapref)) {
+                Log.e("ObjetoLoginDto",loginjson.toJson(login));
+               EnviarLogin(login);
                 // Cedula y contraseña validas, pasar a Mapas
   //              Intent w = new Intent(LoginActivity.this,MapsActivity.class);
     //            startActivity(w);
@@ -176,7 +176,7 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
         }
 
     }
-
+//{"Cedula":"1065655757","Contraseña":"12345678"}
     private boolean cedulaValida(String email) {
 
                 return email.contains("1");

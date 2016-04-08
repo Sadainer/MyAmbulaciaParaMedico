@@ -5,21 +5,20 @@ package com.example.admin_sena.myambulaciaparamedico.Dto;
  */
 public class LoginDto {
     String Cedula;
-    String Contraseña;
+    String Password;
 
     public String getCedula() {
         return Cedula;
     }
 
-    public String getContraseña() {
-        return Contraseña;
+    public String getPassword() {
+        return Password;
     }
 
     public void setCedula(String cedula) {
         Cedula = cedula;
     }
 
-    public void setContraseña(String contraseña) {
-        Contraseña = contraseña;
+    public void setPassword(String password) {Password = password;
     }
 }
