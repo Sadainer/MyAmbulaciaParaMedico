@@ -64,18 +64,30 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private Gson loginjson = new Gson();
-    final SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
+    public SharedPreferences registro;
     Context context;
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedico";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (registro.getString("Cedula","") != null && registro.getString("Contraseña","")!= null){
-            setContentView(R.layout.activity_login);
-        }else
-        {
-            Intent c = new Intent(LoginActivity.this,Registro2.class);
+        //final SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
+        setContentView(R.layout.activity_login);
+        registro = getSharedPreferences("preferences",MODE_PRIVATE);
+        if (registro.getBoolean("ImLoggedIn",false)){
+    //Si ya he iniciado sesion
+
+            this.startService(new Intent(this, ServicioMyAmbu.class));
+            Intent c = new Intent(LoginActivity.this,MapsActivity.class);
             startActivity(c);
+            //Iniciar Servicio
+
+
+            finish();
+
+        }else if(!registro.getBoolean("ImLoggedIn",false))
+        {
+//no he iniciado sesion
+            Toast.makeText(this,"Debe iniciar sesion para continuar",Toast.LENGTH_SHORT).show();
         }
         // Set up the login form.
         CedulaView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -85,12 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
         Button login = (Button) findViewById(R.id.btnLogin);
         Button Registrar = (Button) findViewById(R.id.btnRegistro);
-        final SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
-        final String Cedulapref = registro.getString("Cedula", "2");
-        final String contraseñapref = registro.getString("Contraseña","123");
-        if(Cedulapref != "2"){
-CedulaView.setText(Cedulapref);
-        }
+
 
 
        Registrar.setOnClickListener(new OnClickListener() {
@@ -105,55 +112,41 @@ CedulaView.setText(Cedulapref);
         login.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-intentoLogin(Cedulapref,contraseñapref);
+            LoginDto login = new LoginDto();
+            login.setPassword(ContraseñaView.getText().toString());
+            login.setCedula(CedulaView.getText().toString());
+            intentoLogin(login);
+
+
         }
 });
 
     }
 
 
-    private void intentoLogin(String Cedulapref,String contraseñapref) {
+    private void intentoLogin(LoginDto loginDto) {
         //Reset Errors
         ContraseñaView.setError(null);
         CedulaView.setError(null);
         boolean cancel = false;
         View focusView = null;
-String Contraseña = ContraseñaView.getText().toString();
+        String Contraseña = ContraseñaView.getText().toString();
         String Cedula= CedulaView.getText().toString();
 
-// Crear Objeto loginDto con los datos que el usuario ingresó
 
-
+            // Crear Objeto loginDto con los datos que el usuario ingresó
         //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
 
-        /*PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
 
-            @Override
-    public void processFinish(String output) {
-Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
-    }
-});
-
-        try {
-            EnviarLogin.execute(DIR_URL).get();
-            //System.out.println(resultado);
-        } catch (InterruptedException e) {
-            System.out.println("Error i");
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            System.out.println("Error e");
-            e.printStackTrace();
-        }
-*/
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(Contraseña) && !contraseñaValida(Contraseña)){
+        // Verifica que la variable password no este vacia
+        if (TextUtils.isEmpty(loginDto.getPassword())){
             ContraseñaView.setError(getString(R.string.error_invalid_password));
             focusView =  ContraseñaView;
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(Cedula)) {
+        // Valida si el usuario introdujo cedula
+        else if (TextUtils.isEmpty(loginDto.getCedula())) {
             CedulaView.setError(getString(R.string.error_field_required));
             focusView = CedulaView;
             cancel = true;
@@ -161,20 +154,11 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
             CedulaView.setError(getString(R.string.error_invalid_email));
             focusView = CedulaView;
             cancel = true;
-        }else {
-            if(Cedula.matches(Cedulapref)&& Contraseña.matches(contraseñapref)) {
+        }else { //
+            Log.e("Antesdeenviar", loginjson.toJson(loginDto));
 
-                LoginDto login = new LoginDto();
-                login.setPassword(ContraseñaView.getText().toString());
-                login.setCedula(CedulaView.getText().toString());
-                Log.e("ObjetoLoginDto", loginjson.toJson(login));
-               EnviarLogin(login);
-                // Cedula y contraseña validas, pasar a Mapas
-  //              Intent w = new Intent(LoginActivity.this,MapsActivity.class);
-    //            startActivity(w);
-            }else { Toast.makeText(LoginActivity.this,"Cedula o contraseña no validas",Toast.LENGTH_SHORT).show(); }
+            EnviarLogin(loginDto);
             //No hubo errores
-
         }
 
         if (cancel) {
@@ -192,25 +176,62 @@ Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
 
     private boolean contraseñaValida(String pass) {
 
-        return pass.length() > 4;
+        return pass.length() > 3;
     }
 
-
-    private void EnviarLogin(LoginDto login){
-
-
+    private void EnviarLogin(final LoginDto login){
         PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
 
             @Override
     public void processFinish(String output) {
-//Toast.makeText(context,output.toString(),Toast.LENGTH_SHORT);
-Log.e("output",output);
-    }
+Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
+SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE);
+
+                SharedPreferences.Editor editor = preferences.edit();
+
+
+              //  Log.e("output",output);
+
+       //         SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
+         //       SharedPreferences.Editor editor = prefs.edit();
+                //Quitar Llaves y comillas
+                String output2 =output.replace("{","").replace("}", "").replace("\"", "");
+                String[] output3 = output2.split(",");
+                for (String str:output3) {
+                Log.e("str", str);
+                }
+                String[] Cedula1 = output3[0].split(":");
+                //Id de Ambulancia o Cedula del paramedico registrado
+                String IdRecibido = Cedula1[1];
+                String[] Pass = output3[4].split(":");
+                // Password
+                String Pass1 = Pass[1];
+
+                Log.e("IdAmbulancia",IdRecibido);
+                Log.e("Pass",Pass1);
+                Double pass = Double.valueOf(Pass1);
+                Double pass2 = pass+2;
+                Log.e("Password + 2",String.valueOf(pass2));
+
+                if (login.getCedula().matches(IdRecibido) && login.getPassword().matches(Pass1)){
+                                   //Guardar en sharedPreferences IdAmbulancia y Password
+                    editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass1).putBoolean("ImLoggedIn", true);
+                    editor.commit();
+                    LoginActivity.this.startService(new Intent(LoginActivity.this, ServicioMyAmbu.class));
+                    Intent k = new Intent(LoginActivity.this,MapsActivity.class);
+                    startActivity(k);
+                    //Iniciar Servicio
+                    context.startService(new Intent(context, ServicioMyAmbu.class));
+                }
+                else{
+                    Toast.makeText(LoginActivity.this,"Contraseña o Usuario no validos",Toast.LENGTH_SHORT).show();
+                }
+            }
 });
 
         try {
             EnviarLogin.execute(DIR_URL).get();
-            //System.out.println(resultado);
+            Log.e("ObjetoLoginDto", loginjson.toJson(login));
         } catch (InterruptedException e) {
             System.out.println("Error i");
             e.printStackTrace();
@@ -220,202 +241,5 @@ Log.e("output",output);
         }
     }
 
-/*
-
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        }
-    }
-    //
-
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-
-
- /*   @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-
-*/
 }
 

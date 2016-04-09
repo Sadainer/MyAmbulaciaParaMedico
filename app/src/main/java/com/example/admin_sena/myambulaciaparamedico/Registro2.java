@@ -79,8 +79,8 @@ public void EnviarRegistro (RegistroDto registroDto){
 //            editor.putString("Correo", paramedico.getCorreo());
 //            editor.putString("Contraseña", paramedico.getPassword());
 //            editor.commit();
-        Toast.makeText(context,output,Toast.LENGTH_SHORT).show();
-
+     //   Toast.makeText(context,output,Toast.LENGTH_SHORT).show();
+Log.e("Recibeoutput",output);
         }
     });
     try {
