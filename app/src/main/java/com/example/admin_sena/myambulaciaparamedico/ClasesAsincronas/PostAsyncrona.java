@@ -80,8 +80,10 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             //Read
             StringBuilder sb = null;
             BufferedReader br = null;
+
             //here is the problem
             int responseCode=connection.getResponseCode();
+
             if(responseCode==HttpURLConnection.HTTP_OK){
                 String line;
                 sb = new StringBuilder();

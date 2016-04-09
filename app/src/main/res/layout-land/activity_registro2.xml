@@ -12,24 +12,32 @@
 
     <ScrollView
         android:id="@+id/registro_form"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:fillViewport="false">
+        android:fillViewport="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:contextClickable="false"
+        android:longClickable="false"
+        android:measureAllChildren="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
+
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="376dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:weightSum="1"
-            android:id="@+id/linearLayout">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"></LinearLayout>
+            android:id="@+id/linearLayout"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/edtNombres"
@@ -42,13 +50,17 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <EditText
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:ems="10"
-                android:id="@+id/edtApellidos"
-                android:hint="@string/st_apellidos"/>
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:ems="10"
+                    android:id="@+id/edtApellidos"
+                    android:hint="@string/st_apellidos"/>
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -63,6 +75,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
             </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -92,6 +105,7 @@
                     android:layout_alignParentStart="true" />
 
             </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -107,6 +121,7 @@
                     android:layout_alignParentStart="true" />
 
             </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -122,6 +137,7 @@
                     android:layout_alignParentStart="true" />
 
             </android.support.design.widget.TextInputLayout>
+
             <Button
                 android:layout_width="251dp"
                 android:layout_height="wrap_content"
@@ -134,21 +150,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="0.11"
                 android:textColor="#ffffff" />
-        </LinearLayout>
 
+        </LinearLayout>
     </ScrollView>
 
 
-
-
-
-
-
-
-
-
-
-
 </RelativeLayout>
-
-
