@@ -221,6 +221,7 @@ SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE)
                     Intent k = new Intent(LoginActivity.this,MapsActivity.class);
                     startActivity(k);
                     //Iniciar Servicio
+
                     context.startService(new Intent(context, ServicioMyAmbu.class));
                 }
                 else{

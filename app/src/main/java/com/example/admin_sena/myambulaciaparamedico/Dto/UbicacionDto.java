@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class UbicacionDto {
     private int UbicacionAmbulancia;
-    private int IdAmbulancia;
+    private String IdAmbulancia;
     private Date Fecha;
     private Double Latitud;
     private Double Longitud;
@@ -36,11 +36,11 @@ public class UbicacionDto {
         Fecha = fecha;
     }
 
-    public int getIdAmbulancia() {
+    public String getIdAmbulancia() {
         return IdAmbulancia;
     }
 
-    public void setIdAmbulancia(int idAmbulancia) {
+    public void setIdAmbulancia(String idAmbulancia) {
         IdAmbulancia = idAmbulancia;
     }
 
