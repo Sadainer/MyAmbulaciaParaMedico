@@ -221,8 +221,9 @@ SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE)
                     Intent k = new Intent(LoginActivity.this,MapsActivity.class);
                     startActivity(k);
                     //Iniciar Servicio
-
-                    context.startService(new Intent(context, ServicioMyAmbu.class));
+                    Intent s = new Intent(LoginActivity.this,ServicioMyAmbu.class);
+                    startService(s);
+                    //context.startService(new Intent(, ServicioMyAmbu.class));
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Contraseña o Usuario no validos",Toast.LENGTH_SHORT).show();

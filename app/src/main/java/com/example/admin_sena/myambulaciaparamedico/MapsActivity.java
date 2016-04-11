@@ -23,7 +23,6 @@ import java.net.URL;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-MyReceiverInicio myReceiverInicio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -15,7 +15,7 @@ public class MyReceiverInicio extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
-        Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
+       // Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
         Log.e("Llego el intent","OnReceive");
 //        throw new UnsupportedOperationException("Not yet implemented");
      //   context.startService(new Intent(context, ServicioMyAmbu.class));
