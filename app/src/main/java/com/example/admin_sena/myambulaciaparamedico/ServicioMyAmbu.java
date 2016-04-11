@@ -108,7 +108,13 @@ public class ServicioMyAmbu extends Service {
 
         //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
         if (posicionActual != null) {
-            System.out.println(posicionActual.getLatitude() + "   "+ posicionActual.getLongitude());
+            System.out.println(posicionActual.getLatitude() + "   " + posicionActual.getLongitude());
+            Intent d =new Intent(ServicioMyAmbu.this,MapsActivity.class);
+            d.putExtra("LatAmbulancia",posicionActual.getLatitude());
+            d.putExtra("LngAmbulancia",posicionActual.getLongitude());
+
+            sendBroadcast(d);
+           Log.e("broadcast enviado",String.valueOf(posicionActual.getLatitude()));
             EnviarUbicacion(posicionActual);
         }
 
