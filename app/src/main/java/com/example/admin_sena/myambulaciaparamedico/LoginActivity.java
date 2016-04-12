@@ -123,7 +123,6 @@ public class LoginActivity extends AppCompatActivity {
         CedulaView.setError(null);
         boolean cancel = false;
         View focusView = null;
-        String Contraseña = ContraseñaView.getText().toString();
         String Cedula= CedulaView.getText().toString();
 
 
@@ -167,59 +166,40 @@ public class LoginActivity extends AppCompatActivity {
                 return email.contains("1");
     }
 
-    private boolean contraseñaValida(String pass) {
-
-        return pass.length() > 3;
-    }
 
     private void EnviarLogin(final LoginDto login){
         PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
 
             @Override
             public void processFinish(String output) {
+
                 Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
-                SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE);
+                SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 
-
-              //  Log.e("output",output);
-
-       //         SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
-         //       SharedPreferences.Editor editor = prefs.edit();
-                //Quitar Llaves y comillas
-                String output2 =output.replace("{","").replace("}", "").replace("\"", "");
-                String[] output3 = output2.split(",");
-                for (String str:output3) {
-                Log.e("str", str);
-                }
-                String[] Cedula1 = output3[0].split(":");
-                //Id de Ambulancia o Cedula del paramedico registrado
-                String IdRecibido = Cedula1[1];
-                String[] Pass = output3[4].split(":");
-                // Password
-                String Pass1 = Pass[1];
-
-                Log.e("IdAmbulancia",IdRecibido);
-                Log.e("Pass",Pass1);
-                Double pass = Double.valueOf(Pass1);
-                Double pass2 = pass+2;
-                Log.e("Password + 2",String.valueOf(pass2));
-
-                if (login.getCedula().matches(IdRecibido) && login.getPassword().matches(Pass1)){
-                                   //Guardar en sharedPreferences IdAmbulancia y Password
-                    editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass1).putBoolean("ImLoggedIn", true);
+                if(output!="Error"){     //////////Si no hay errores////////
+                    /////Convertir Json a LoginDto
+                    LoginDto loginExitoso = loginjson.fromJson(output,LoginDto.class);
+                    //Asignar Id
+                    String IdRecibido = loginExitoso.getCedula();
+                    //Asignar Contraseña
+                    String Pass = loginExitoso.getPassword();
+                    //Guardarlas en Sharedpreferences
+                    editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass).putBoolean("ImLoggedIn", true);
                     editor.commit();
                     LoginActivity.this.startService(new Intent(LoginActivity.this, ServicioMyAmbu.class));
+                    finish();
                     Intent k = new Intent(LoginActivity.this,MapsActivity.class);
                     startActivity(k);
                     //Iniciar Servicio
                     Intent s = new Intent(LoginActivity.this,ServicioMyAmbu.class);
                     startService(s);
-                    //context.startService(new Intent(, ServicioMyAmbu.class));
+
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Contraseña o Usuario no validos",Toast.LENGTH_SHORT).show();
                 }
+
             }
 });
 
