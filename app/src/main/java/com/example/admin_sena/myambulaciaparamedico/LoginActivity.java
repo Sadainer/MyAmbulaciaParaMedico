@@ -72,22 +72,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //final SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
         setContentView(R.layout.activity_login);
+
         registro = getSharedPreferences("preferences",MODE_PRIVATE);
         if (registro.getBoolean("ImLoggedIn",false)){
     //Si ya he iniciado sesion
-
             this.startService(new Intent(this, ServicioMyAmbu.class));
             Intent c = new Intent(LoginActivity.this,MapsActivity.class);
             startActivity(c);
             //Iniciar Servicio
 
-
             finish();
 
-        }else if(!registro.getBoolean("ImLoggedIn",false))
-        {
-//no he iniciado sesion
-            Toast.makeText(this,"Debe iniciar sesion para continuar",Toast.LENGTH_SHORT).show();
         }
         // Set up the login form.
         CedulaView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -116,10 +111,8 @@ public class LoginActivity extends AppCompatActivity {
             login.setPassword(ContraseñaView.getText().toString());
             login.setCedula(CedulaView.getText().toString());
             intentoLogin(login);
-
-
-        }
-});
+            }
+        });
 
     }
 
@@ -184,10 +177,9 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
     public void processFinish(String output) {
-Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
-SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE);
-
-                SharedPreferences.Editor editor = preferences.edit();
+        Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
+        SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
 
 
               //  Log.e("output",output);
