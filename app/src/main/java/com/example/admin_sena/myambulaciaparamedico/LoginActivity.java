@@ -176,10 +176,10 @@ public class LoginActivity extends AppCompatActivity {
         PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
 
             @Override
-    public void processFinish(String output) {
-        Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
-        SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+            public void processFinish(String output) {
+                Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
+                SharedPreferences preferences = getSharedPreferences("preferences",MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
 
 
               //  Log.e("output",output);

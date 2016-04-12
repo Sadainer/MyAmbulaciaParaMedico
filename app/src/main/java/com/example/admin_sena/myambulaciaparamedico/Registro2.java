@@ -80,15 +80,15 @@ public void EnviarRegistro (RegistroDto registroDto){
         public void processFinish(String output) {
             Log.e("output", output);
             if (output!="Error") {
-                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
-                editor.putString("Nombres", paramedico.getNombres());
-                editor.putString("Apellidos", paramedico.getApellidos());
-                editor.putString("Cedula", paramedico.getCedula());
-                editor.putString("Correo", paramedico.getCorreo());
-                editor.putString("Contraseña", paramedico.getPassword());
-                editor.commit();
+//                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+//                SharedPreferences.Editor editor = prefs.edit();
+//                RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
+//                editor.putString("Nombres", paramedico.getNombres());
+//                editor.putString("Apellidos", paramedico.getApellidos());
+//                editor.putString("Cedula", paramedico.getCedula());
+//                editor.putString("Correo", paramedico.getCorreo());
+//                editor.putString("Contraseña", paramedico.getPassword());
+//                editor.commit();
                 finish();
 //Volver al login
                 Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
