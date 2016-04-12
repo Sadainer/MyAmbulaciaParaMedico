@@ -31,14 +31,12 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     URL url;
     HttpURLConnection connection;
     Context cnt;
-    private ProgressDialog prgEnviando;
 
 
     public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
         cnt= context;
         this.delegate = delegate;
-        prgEnviando = new ProgressDialog(context);
     }
     public void execute() {
         // TODO Auto-generated method stub
@@ -49,15 +47,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     //Variable ruta se guarda la URI del servicio GET a consumir
 
 
-    @Override
-    protected void onPreExecute() {
 
-
-        this.prgEnviando.setTitle("MyAmbu");
-        this.prgEnviando.setMessage("Enviando ...");
-        this.prgEnviando.show();
-
-    }
 
     @Override
     protected String doInBackground(String... params) {
@@ -117,6 +107,5 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         delegate.processFinish(result);
-        this.prgEnviando.dismiss();
     }
 }
