@@ -3,6 +3,7 @@ package com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
 
@@ -21,8 +22,6 @@ import java.net.URL;
  */
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
-
-
     public interface AsyncResponse {
         void processFinish(String output);
     }
@@ -34,11 +33,12 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     Context cnt;
     private ProgressDialog prgEnviando;
 
+
     public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
         cnt= context;
         this.delegate = delegate;
-       // prgEnviando = new ProgressDialog(context);
+        prgEnviando = new ProgressDialog(context);
     }
     public void execute() {
         // TODO Auto-generated method stub
@@ -52,11 +52,11 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     @Override
     protected void onPreExecute() {
 
-/*
+
         this.prgEnviando.setTitle("MyAmbu");
         this.prgEnviando.setMessage("Enviando ...");
         this.prgEnviando.show();
-*/
+
     }
 
     @Override
@@ -80,11 +80,12 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             //Read
             StringBuilder sb = null;
             BufferedReader br = null;
-
             //here is the problem
-            int responseCode=connection.getResponseCode();
 
-            if(responseCode==HttpURLConnection.HTTP_OK){
+            int responseCode=connection.getResponseCode();
+            Log.e("respondeCode",String.valueOf(responseCode));
+            if(responseCode==HttpURLConnection.HTTP_ACCEPTED || responseCode==HttpURLConnection.HTTP_OK
+                    || responseCode==HttpURLConnection.HTTP_CREATED ){
                 String line;
                 sb = new StringBuilder();
 
@@ -95,9 +96,11 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
                 }
-
+                mensajeRespuesta = sb.toString();
+            }else{
+                mensajeRespuesta= "Error";
             }
-            mensajeRespuesta = sb.toString();
+
 
         } catch (MalformedURLException e) {
             System.out.println("MalformedURLException");
@@ -114,6 +117,6 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         delegate.processFinish(result);
-  //      this.prgEnviando.dismiss();
+        this.prgEnviando.dismiss();
     }
 }
