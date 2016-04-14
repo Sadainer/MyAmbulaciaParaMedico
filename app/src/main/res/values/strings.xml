@@ -29,6 +29,7 @@
     <string name="st_confirmar_contraseña">Confirmar Contraseña</string>
 
     <!-- Dialogo Aceptar Emergencia -->
-    <string name="st_Si_enviar">Si, Enviar</string>
-    <string name="st_No_salir">No, Salir</string>
+    <string name="st_Si_Aceptar">Si, Aceptar</string>
+    <string name="st_No_Volver">No, Volver</string>
+
 </resources>
