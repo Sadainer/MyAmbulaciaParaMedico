@@ -88,7 +88,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
                 }
                 mensajeRespuesta = sb.toString();
             }else{
-                mensajeRespuesta= "Error";
+                mensajeRespuesta= "ErrorA";
             }
 
 

@@ -18,7 +18,7 @@ public class MyReceiverInicio extends BroadcastReceiver {
        // Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
         Log.e("Llego el intent","OnReceive");
 //        throw new UnsupportedOperationException("Not yet implemented");
-     //   context.startService(new Intent(context, ServicioMyAmbu.class));
+        context.startService(new Intent(context, ServicioMyAmbu.class));
 
     }
 }

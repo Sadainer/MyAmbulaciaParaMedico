@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     private Gson loginjson = new Gson();
     public SharedPreferences registro;
     Context context;
-    private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedico";
+    private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedicos";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

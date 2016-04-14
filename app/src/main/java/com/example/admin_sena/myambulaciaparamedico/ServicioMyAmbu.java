@@ -134,12 +134,11 @@ public class ServicioMyAmbu extends Service {
 
         UbicacionDto ubicacion = new UbicacionDto();
         SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
-
-        ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia","1"));
-        //ubicacion.setIdAmbulancia(1);
+        //ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
+        ubicacion.setIdAmbulancia("1");
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
-
+        Log.e("Envio Posicion",gsson.toJson(ubicacion) );
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
@@ -174,26 +173,26 @@ public class ServicioMyAmbu extends Service {
             @Override
             public void onMessageReceived(JsonElement json) {
 
-                JsonObject json_data = json.getAsJsonObject();
-                JsonElement mensaje = json_data.get("A");
-
-                if (mensaje != null) {
+//                JsonObject json_data = json.getAsJsonObject();
+//                JsonElement mensaje = json_data.get("A");
+//
+//                if (mensaje != null) {
 
                     Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     v.vibrate(2000);
 
-                    JsonArray men = mensaje.getAsJsonArray();
+//                    JsonArray men = mensaje.getAsJsonArray();
 
-                    Log.w("sada", men.get(1).toString());
-
-                    String[] separado=men.get(1).toString().split("_");
-                    Log.e("sada",separado[4]);
-
-                    AlarmaNotificacion();
-
-                    System.out.println("Cadena recibida " + men.get(0).getAsString());
-                    System.out.println("Cadena recibida " + men.get(1).getAsString());
-                }
+//                    Log.w("sada", men.get(1).toString());
+//
+//                    String[] separado=men.get(1).toString().split("_");
+//                    Log.e("sada",separado[4]);
+//
+//                    AlarmaNotificacion();
+//
+//                    System.out.println("Cadena recibida " + men.get(0).getAsString());
+//                    System.out.println("Cadena recibida " + men.get(1).getAsString());
+//                }
             }
         });
 
@@ -238,9 +237,9 @@ public class ServicioMyAmbu extends Service {
         connection.connected(new Runnable() {
             @Override
             public void run() {
-                SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
-                String Cedulapref = registro.getString("Cedula", "2");
-                proxy.invoke("registerConId",Cedulapref);
+//                SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
+//                String Cedulapref = registro.getString("Cedula", "2");
+                proxy.invoke("registerConId",1);
                 System.out.println("Está conectado");
             }
         });
