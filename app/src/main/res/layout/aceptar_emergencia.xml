@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="313dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="154dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/txt_info_emergencia"
+                android:text="    i" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="346dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:weightSum="1"
+                android:layout_gravity="bottom">
+
+                <Button
+                    android:layout_width="128dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/st_Si_Aceptar"
+                    android:id="@+id/button"
+                    android:theme="@style/ButtonNormal"
+                    android:background="@drawable/selector_boton_normal"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:layout_margin="@dimen/activity_vertical_margin" />
+
+                <Button
+                    android:layout_width="128dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/st_No_Volver"
+                    android:id="@+id/button2"
+                    android:theme="@style/ButtonNormal"
+                    android:background="@drawable/selector_boton_normal"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:layout_weight="0.20" />
+            </LinearLayout>
+        </TableLayout>
+
+
+
+</LinearLayout>
