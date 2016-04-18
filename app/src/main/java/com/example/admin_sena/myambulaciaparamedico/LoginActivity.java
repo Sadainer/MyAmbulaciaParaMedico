@@ -3,10 +3,12 @@ package com.example.admin_sena.myambulaciaparamedico;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     public SharedPreferences registro;
     Context context;
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedicos";
+    public ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,18 +126,14 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void intentoLogin(LoginDto loginDto) {
+    private void intentoLogin(final LoginDto loginDto) {
         //Reset Errors
         ContraseñaView.setError(null);
         CedulaView.setError(null);
         boolean cancel = false;
         View focusView = null;
         String Cedula= CedulaView.getText().toString();
-
-
-            // Crear Objeto loginDto con los datos que el usuario ingresó
-        //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
-
+        progressDialog = new ProgressDialog(LoginActivity.this);
 
         // Verifica que la variable password no este vacia
         if (TextUtils.isEmpty(loginDto.getPassword())){
@@ -148,15 +147,27 @@ public class LoginActivity extends AppCompatActivity {
             CedulaView.setError(getString(R.string.error_field_required));
             focusView = CedulaView;
             cancel = true;
-        } else if (!cedulaValida(Cedula)) {
+        } else if (Cedula.length()<5) {
             CedulaView.setError(getString(R.string.error_invalid_email));
             focusView = CedulaView;
             cancel = true;
-        }else { //
+        }else { //Ningun error con el login hasta ahora, se procede a validar la informacion en el servidor
             Log.e("Antesdeenviar", loginjson.toJson(loginDto));
 
-            EnviarLogin(loginDto);
-            //No hubo errores
+
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    EnviarLogin(loginDto);
+                }
+            };
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 2000);
+
+            progressDialog.setTitle("Enviando");
+            progressDialog.setMessage("Por favor espere");
+            progressDialog.show();
         }
 
         if (cancel) {
@@ -166,15 +177,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
-//{"Cedula":"1065655757","Contraseña":"12345678"}
-    private boolean cedulaValida(String email) {
 
-                return email.contains("1");
-    }
 
 
     private void EnviarLogin(final LoginDto login){
-        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
+        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), LoginActivity.this, new PostAsyncrona.AsyncResponse() {
 
             @Override
             public void processFinish(String output) {
@@ -184,6 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
 
                 if(output!="Error"){     //////////Si no hay errores////////
+                    progressDialog.dismiss();
                     /////Convertir Json a LoginDto
                     LoginDto loginExitoso = loginjson.fromJson(output,LoginDto.class);
                     //Asignar Id
