@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/opt_registro"
+        android:title="@string/registro1"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+    <item android:id="@+id/opt_olvido_password"
+        android:title="@string/st_olvide_pass"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+</menu>

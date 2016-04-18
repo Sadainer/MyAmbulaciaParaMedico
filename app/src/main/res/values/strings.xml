@@ -5,7 +5,7 @@
 
     <!-- Strings relacionados con el login -->
     <string name="cedula_login">Usuario</string>
-
+    <string name="st_olvide_pass">Restablecer Contraseña</string>
     <string name="contraseña">Contraseña</string>
     <string name="registro1">Registro</string>
     <string name="action_sign_in">Iniciar Sesion</string>
@@ -32,6 +32,6 @@
     <!-- Dialogo Aceptar Emergencia -->
     <string name="st_Si_Aceptar">Si, Aceptar</string>
     <string name="st_No_Volver">No, Volver</string>
-
-
+    <!-- Menu en mapas -->
+    <string name="st_cerrar_sesion">Cerrar Sesion</string>
 </resources>
