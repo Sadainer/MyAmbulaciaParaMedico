@@ -3,10 +3,13 @@ package com.example.admin_sena.myambulaciaparamedico;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,16 +50,6 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class LoginActivity extends AppCompatActivity {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
- //   private static final int REQUEST_READ_CONTACTS = 0;
-
-
-   // private static final String[] DUMMY_CREDENTIALS = new String[]{
-     //       "foo@example.com:hello", "bar@example.com:world"
-   // };
-   // private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView CedulaView;
@@ -65,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     private Gson loginjson = new Gson();
     public SharedPreferences registro;
+    private ServiceSignalR mService;
+    private boolean mBound = false;
     Context context;
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedicos";
     @Override
@@ -167,6 +162,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+
     private void EnviarLogin(final LoginDto login){
         PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
 
@@ -187,13 +183,14 @@ public class LoginActivity extends AppCompatActivity {
                     //Guardarlas en Sharedpreferences
                     editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass).putBoolean("ImLoggedIn", true);
                     editor.commit();
-                    LoginActivity.this.startService(new Intent(LoginActivity.this, ServicioMyAmbu.class));
+
                     finish();
-                    Intent k = new Intent(LoginActivity.this,MapsActivity.class);
-                    startActivity(k);
-                    //Iniciar Servicio
-                    Intent s = new Intent(LoginActivity.this,ServicioMyAmbu.class);
-                    startService(s);
+
+                    startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+
+
+
+
 
                 }
                 else{

@@ -19,6 +19,7 @@ public class MyReceiverInicio extends BroadcastReceiver {
         Log.e("Llego el intent","OnReceive");
 //        throw new UnsupportedOperationException("Not yet implemented");
         context.startService(new Intent(context, ServicioMyAmbu.class));
+        context.startService(new Intent(context, ServiceSignalR.class));
 
     }
 }

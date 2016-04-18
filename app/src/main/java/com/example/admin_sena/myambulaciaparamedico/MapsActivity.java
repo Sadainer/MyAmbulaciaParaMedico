@@ -49,9 +49,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+
+
+
+        startService(new Intent(MapsActivity.this, ServiceSignalR.class));
+        startService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
+
         cnt=this;
         locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         //this to set delegate/listener back to this class
+
+
+
 
         Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);

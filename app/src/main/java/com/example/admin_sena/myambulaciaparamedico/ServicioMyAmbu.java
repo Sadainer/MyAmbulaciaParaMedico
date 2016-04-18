@@ -36,15 +36,6 @@ import com.google.gson.JsonObject;
 
 import java.util.concurrent.ExecutionException;
 
-import microsoft.aspnet.signalr.client.Action;
-import microsoft.aspnet.signalr.client.ConnectionState;
-import microsoft.aspnet.signalr.client.ErrorCallback;
-import microsoft.aspnet.signalr.client.MessageReceivedHandler;
-import microsoft.aspnet.signalr.client.Platform;
-import microsoft.aspnet.signalr.client.StateChangedCallback;
-import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
-import microsoft.aspnet.signalr.client.hubs.HubConnection;
-import microsoft.aspnet.signalr.client.hubs.HubProxy;
 
 public class ServicioMyAmbu extends Service {
 
@@ -62,10 +53,7 @@ public class ServicioMyAmbu extends Service {
     private static int RADIO_ACTUALIZACION=10;
     //Listener de ubicacion
     private LocationListener locationListener = null;
-    public HubConnection connection;
-    HubProxy proxy;
 
-    private static final int NOTIF_ALERTA_ID = 1;
 
     final Gson gsson = new Gson();
 
@@ -81,7 +69,7 @@ public class ServicioMyAmbu extends Service {
         super.onCreate();
         cnt= getApplicationContext();
         System.out.println("Servicio Iniciado");
-        startConnection();
+
 
     }
 
@@ -159,133 +147,9 @@ public class ServicioMyAmbu extends Service {
 
     }
 
-    public void startConnection() {
-
-        Platform.loadPlatformComponent(new AndroidPlatformComponent());
-
-        String host = "http://190.109.185.138:8013/";
-        connection = new HubConnection(host);
-        proxy = connection.createHubProxy("HubAlarma");
-
-        // subscribe to received - equal to `connection.received(function (data)` from javascript
-        connection.received(new MessageReceivedHandler() {
-
-            @Override
-            public void onMessageReceived(JsonElement json) {
-
-//                JsonObject json_data = json.getAsJsonObject();
-//                JsonElement mensaje = json_data.get("A");
-//
-//                if (mensaje != null) {
-
-                    Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                    v.vibrate(2000);
-
-//                    JsonArray men = mensaje.getAsJsonArray();
-
-//                    Log.w("sada", men.get(1).toString());
-//
-//                    String[] separado=men.get(1).toString().split("_");
-//                    Log.e("sada",separado[4]);
-//
-//                    AlarmaNotificacion();
-//
-//                    System.out.println("Cadena recibida " + men.get(0).getAsString());
-//                    System.out.println("Cadena recibida " + men.get(1).getAsString());
-//                }
-            }
-        });
-
-        connection.error(new ErrorCallback() {
-            @Override
-            public void onError(Throwable throwable) {
-                System.out.println("Error al conectar, verifique la conexión");
-                /*connection.disconnect();*/
-            }
-        });
-
-        connection.closed(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Conexion Cerrada");
-                /*connection.start();*/
-            }
-        });
-
-        connection.reconnected(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Conexion Reconected");
-            }
-        });
-
-        connection.reconnecting(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Conexion Reconecting");
-                /*connection.disconnect();*/
-            }
-        });
-
-        connection.connectionSlow(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Conexión lenta, verifique");
-            }
-        });
-
-        connection.connected(new Runnable() {
-            @Override
-            public void run() {
-//                SharedPreferences registro = getSharedPreferences("prefs",MODE_PRIVATE);
-//                String Cedulapref = registro.getString("Cedula", "2");
-                proxy.invoke("registerConId",1);
-                System.out.println("Está conectado");
-            }
-        });
-
-        connection.stateChanged(new StateChangedCallback() {
-            @Override
-            public void stateChanged(ConnectionState oldState, ConnectionState newState) {
-                System.out.println("Pasó de " + oldState.toString() + " a " + newState.toString());
-            }
-        });
-        connection.start()
-                .done(new Action<Void>() {
-                    @Override
-                    public void run(Void obj) throws Exception {
-
-                        System.out.println("Iniciando");
-                    }
-                });
-    }
-
-    // Notifica sobre GPS desactivado y envia para activacion
-    private void AlarmaNotificacion(){
-
-        Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-        myIntent.putExtra("notificationID", 2);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(cnt, 0, myIntent, 0);
 
 
-        CharSequence ticker ="Activar GPS";
-        CharSequence contentTitle = "MyAmbu";
-        CharSequence contentText = "GPS Desactivado";
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Notification noti = new NotificationCompat.Builder(cnt)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setTicker(ticker)
-                .setContentTitle(contentTitle)
-                .setContentText(contentText)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .addAction(R.drawable.ic_setting_dark, ticker, pendingIntent)
-                .setVibrate(new long[] {100, 250, 100, 500})
-                .setSound(alarmSound)
-                .build();
-        nm.notify(2, noti);
-    }
+
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
