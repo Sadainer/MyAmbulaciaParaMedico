@@ -73,7 +73,7 @@ public class ServiceSignalR extends Service {
 
                     Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     v.vibrate(2000);
-                    Toast.makeText(cnt,mensaje.toString(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),mensaje.toString(),Toast.LENGTH_SHORT).show();
                     Log.e("onMessageReceived", mensaje.toString());
                 }
             }

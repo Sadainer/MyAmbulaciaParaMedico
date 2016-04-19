@@ -188,10 +188,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
 
-
-
-
-
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Contraseña o Usuario no validos",Toast.LENGTH_SHORT).show();
