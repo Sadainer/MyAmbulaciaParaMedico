@@ -27,6 +27,8 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -111,6 +113,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menulogin, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
 
     private void intentoLogin(LoginDto loginDto) {
         //Reset Errors
@@ -175,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(output!="Error"){     //////////Si no hay errores////////
                     /////Convertir Json a LoginDto
-                    LoginDto loginExitoso = loginjson.fromJson(output,LoginDto.class);
+                    LoginDto loginExitoso = loginjson.fromJson(output, LoginDto.class);
                     //Asignar Id
                     String IdRecibido = loginExitoso.getCedula();
                     //Asignar Contraseña
