@@ -3,6 +3,7 @@ package com.example.admin_sena.myambulaciaparamedico;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -120,9 +121,9 @@ public class ServiceSignalR extends Service {
         connection.connected(new Runnable() {
             @Override
             public void run() {
+                SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
 
-
-                proxy.invoke("registerConId", "1");
+                proxy.invoke("registerConId", prefs.getString("IdAmbulancia", "1"));
                 System.out.println("Está conectado");
             }
         });
