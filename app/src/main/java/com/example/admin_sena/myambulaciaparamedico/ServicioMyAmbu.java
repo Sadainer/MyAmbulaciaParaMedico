@@ -122,8 +122,8 @@ public class ServicioMyAmbu extends Service {
 
         UbicacionDto ubicacion = new UbicacionDto();
         SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
-        //ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
-        ubicacion.setIdAmbulancia("1");
+        ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
+        //ubicacion.setIdAmbulancia("1");
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
         Log.e("Envio Posicion",gsson.toJson(ubicacion) );
