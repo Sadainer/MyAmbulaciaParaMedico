@@ -155,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
             CedulaView.setError(getString(R.string.error_field_required));
             focusView = CedulaView;
             cancel = true;
-        } else if (!cedulaValida(Cedula)) {
+        } else if (Cedula.length()<8) {
             CedulaView.setError(getString(R.string.error_invalid_email));
             focusView = CedulaView;
             cancel = true;
@@ -173,12 +173,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
-//{"Cedula":"1065655757","Contraseña":"12345678"}
-    private boolean cedulaValida(String email) {
-
-                return email.contains("1");
-    }
-
 
 
     private void EnviarLogin(final LoginDto login){
