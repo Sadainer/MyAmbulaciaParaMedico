@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,9 +40,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationListener locationListener = null;
     String MejorProveedor = null;
     //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION = 15;
+    private static int TIEMPO_ACTUALIZACION = 15000;
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION = 7;
+    private static int RADIO_ACTUALIZACION = 30;
     Context cnt;
 
     @Override
@@ -92,7 +94,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.opt_cerrar_sesion:
+                SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("ImLoggedIn", false);
+                editor.commit();
+                Intent volver_a_login = new Intent(MapsActivity.this,LoginActivity.class);
+                startActivity(volver_a_login);
 
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
     @Override

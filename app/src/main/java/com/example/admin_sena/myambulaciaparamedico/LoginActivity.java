@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                Intent pasar_a_registro = new Intent(LoginActivity.this,Registro2.class);
-           startActivity(pasar_a_registro);
+               startActivity(pasar_a_registro);
            }
        });
 
@@ -116,11 +116,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menulogin, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.opt_registro:
+                Intent pasar_a_registro = new Intent(LoginActivity.this,Registro2.class);
+                startActivity(pasar_a_registro);
+        }
         return super.onOptionsItemSelected(item);
     }
 
