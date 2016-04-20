@@ -68,14 +68,22 @@ public class ServiceSignalR extends Service {
 
 
                 JsonObject json_data = json.getAsJsonObject();
-                JsonElement mensaje = json_data.get("A");
+                final JsonElement mensaje = json_data.get("A");
 //
                 if (mensaje != null) {
 
                     Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     v.vibrate(2000);
-                    Toast.makeText(getApplicationContext(),mensaje.toString(),Toast.LENGTH_SHORT).show();
-                    Log.e("onMessageReceived", mensaje.toString());
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), mensaje.getAsString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    Log.e("onMessageReceived", mensaje.getAsString());
                 }
             }
         });
