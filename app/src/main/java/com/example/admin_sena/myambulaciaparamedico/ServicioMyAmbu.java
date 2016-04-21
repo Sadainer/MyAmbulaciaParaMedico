@@ -85,10 +85,7 @@ public class ServicioMyAmbu extends Service {
 
         //Mejor proveedor por criterio
         MejorProveedor = locationMangaer.getBestProvider(req, false);
-/*
-        MyThread myThread = new MyThread();
-        myThread.start();
-  */
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -100,11 +97,7 @@ public class ServicioMyAmbu extends Service {
         //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
         if (posicionActual != null) {
             System.out.println(posicionActual.getLatitude() + "   " + posicionActual.getLongitude());
-           // Intent d =new Intent(ServicioMyAmbu.this,MapsActivity.class);
-           // d.putExtra("LatAmbulancia",posicionActual.getLatitude());
-         //   d.putExtra("LngAmbulancia",posicionActual.getLongitude());
 
-       //     sendBroadcast(d);
             double LatAmbu= posicionActual.getLatitude();
             double LngAmbu= posicionActual.getLongitude();
             Intent intent2 = new Intent();
@@ -122,32 +115,6 @@ public class ServicioMyAmbu extends Service {
 
     }
 
-/*
-    public class MyThread extends Thread{
-
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            for(int i=0; i<10; i++){
-                try {
-                    Thread.sleep(5000);
-                    Intent intent = new Intent();
-                    intent.setAction(MY_ACTION);
-
-                    intent.putExtra("DATAPASSED", i);
-
-                    sendBroadcast(intent);
-
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            stopSelf();
-        }
-
-    }
-*/
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
