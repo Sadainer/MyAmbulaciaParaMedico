@@ -53,6 +53,7 @@ public class ServicioMyAmbu extends Service {
     private static int RADIO_ACTUALIZACION=5;
     //Listener de ubicacion
     private LocationListener locationListener = null;
+    //My_Action
     final static String MY_ACTION = "MY_ACTION";
 
     final Gson gsson = new Gson();
