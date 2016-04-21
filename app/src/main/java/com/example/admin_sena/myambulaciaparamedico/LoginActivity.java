@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         registro = getSharedPreferences("preferences",MODE_PRIVATE);
         if (registro.getBoolean("ImLoggedIn",false)){
     //Si ya he iniciado sesion
-            this.startService(new Intent(this, ServicioMyAmbu.class));
+//            this.startService(new Intent(this, ServicioMyAmbu.class));
             Intent c = new Intent(LoginActivity.this,MapsActivity.class);
             startActivity(c);
             //Iniciar Servicio
@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void processFinish(String output) {
 
-                Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LoginActivity.this,output.toString(),Toast.LENGTH_SHORT).show();
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 

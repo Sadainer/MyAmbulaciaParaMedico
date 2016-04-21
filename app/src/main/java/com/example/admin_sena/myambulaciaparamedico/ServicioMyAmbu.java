@@ -48,12 +48,12 @@ public class ServicioMyAmbu extends Service {
     // Variables de URI del servicio
     private static String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
     //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION=10000;
+    private static int TIEMPO_ACTUALIZACION=20000;
     //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION=10;
+    private static int RADIO_ACTUALIZACION=5;
     //Listener de ubicacion
     private LocationListener locationListener = null;
-
+    final static String MY_ACTION = "MY_ACTION";
 
     final Gson gsson = new Gson();
 
@@ -85,7 +85,10 @@ public class ServicioMyAmbu extends Service {
 
         //Mejor proveedor por criterio
         MejorProveedor = locationMangaer.getBestProvider(req, false);
-
+/*
+        MyThread myThread = new MyThread();
+        myThread.start();
+  */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -102,15 +105,49 @@ public class ServicioMyAmbu extends Service {
          //   d.putExtra("LngAmbulancia",posicionActual.getLongitude());
 
        //     sendBroadcast(d);
-           Log.e("broadcast enviado",String.valueOf(posicionActual.getLatitude()));
+            double LatAmbu= posicionActual.getLatitude();
+            double LngAmbu= posicionActual.getLongitude();
+            Intent intent2 = new Intent();
+            intent2.setAction(MY_ACTION);
+            intent2.putExtra("LatAmbu",LatAmbu).putExtra("LngAmbu",LngAmbu);
+
+            sendBroadcast(intent2);
+            Log.e("broadcast enviado",String.valueOf(posicionActual.getLatitude()));
             EnviarUbicacion(posicionActual);
         }
 
         locationListener = new MiUbicacion();
         locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
         return super.onStartCommand(intent, flags, startId);
+
     }
 
+/*
+    public class MyThread extends Thread{
+
+        @Override
+        public void run() {
+            // TODO Auto-generated method stub
+            for(int i=0; i<10; i++){
+                try {
+                    Thread.sleep(5000);
+                    Intent intent = new Intent();
+                    intent.setAction(MY_ACTION);
+
+                    intent.putExtra("DATAPASSED", i);
+
+                    sendBroadcast(intent);
+
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            stopSelf();
+        }
+
+    }
+*/
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -119,6 +156,8 @@ public class ServicioMyAmbu extends Service {
 
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(Location location){
+
+
 
         UbicacionDto ubicacion = new UbicacionDto();
         SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);

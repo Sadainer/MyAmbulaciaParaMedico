@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -34,17 +35,9 @@ import java.net.URL;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    //Variable para guardar la posicion inicial del equipo
-    private Location posicionActual = null;
-    private LocationManager locationMangaer = null;
-    private LocationListener locationListener = null;
-    String MejorProveedor = null;
-    //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION = 15000;
-    //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION = 30;
     Context cnt;
 
+    MyReceiver myReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,37 +47,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
 
 
-
-
         startService(new Intent(MapsActivity.this, ServiceSignalR.class));
         startService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
 
         cnt=this;
-        locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
-        //this to set delegate/listener back to this class
-
-
-
-
-        Criteria req = new Criteria();
-        req.setAccuracy(Criteria.ACCURACY_FINE);
-        req.setAltitudeRequired(true);
-
-        //Mejor proveedor por criterio
-        MejorProveedor = locationMangaer.getBestProvider(req, false);
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-        }
-        //Configuramos el listener para que verifique la ubicaciones cada 10000 milisegundos y 20 metros, si cumple las dos condiciones
-        //se dispara el metodo
-        locationListener = new MiUbicacion();
-        locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
-
 
         mapFragment.getMapAsync(this);
     }
@@ -109,68 +75,60 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        // TODO Auto-generated method stub
+
+        //Register BroadcastReceiver
+        //to receive event from our service
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ServicioMyAmbu.MY_ACTION);
+        registerReceiver(myReceiver, intentFilter);
+
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        unregisterReceiver(myReceiver);
+        super.onStop();
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        boolean network_enabled = locationMangaer.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (network_enabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-            }
-            Location location = locationMangaer.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(location!=null){
-                posicionActual = location;
-                CrearMarcador(location, "Mi Ubicación");
-            }
-        }
-        // Add a marker in Sydney and move the camera
-
-       // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
-    public void CrearMarcador(Location location, String Titulo)
+    public void CrearMarcador(LatLng location, String Titulo)
     {
         mMap.clear();
         mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .position(location)
                 .title(Titulo));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
-
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15.0f));
 
     }
 
-
-
-    private class MiUbicacion implements LocationListener
-    {
+    private class MyReceiver extends BroadcastReceiver{
 
         @Override
-        public void onLocationChanged(Location location) {
-CrearMarcador(location,"Mi Ubicacion");
-        }
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
+            double la = arg1.getDoubleExtra("LatAmbu",0);
+            double ln = arg1.getDoubleExtra("LngAmbu",0);
+            LatLng latLng = new LatLng(la,ln);
+            CrearMarcador(latLng,"Mi_ubicacion");
 
         }
     }
+
+
 
 
 }

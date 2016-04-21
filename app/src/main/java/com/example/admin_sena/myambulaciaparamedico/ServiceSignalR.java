@@ -80,6 +80,7 @@ public class ServiceSignalR extends Service {
 
                         @Override
                         public void run() {
+
                             Toast.makeText(getApplicationContext(), mensaje.getAsString(), Toast.LENGTH_SHORT).show();
                         }
                     });
