@@ -64,13 +64,11 @@ public class ServicioMyAmbu extends Service {
     }
 
 
-
     @Override
     public void onCreate() {
         super.onCreate();
         cnt= getApplicationContext();
         System.out.println("Servicio Iniciado");
-
 
     }
 

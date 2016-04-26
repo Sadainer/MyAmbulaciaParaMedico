@@ -51,7 +51,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         startService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
 
         cnt=this;
-
         mapFragment.getMapAsync(this);
     }
     @Override
@@ -68,6 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("ImLoggedIn", false);
                 editor.commit();
+                stopService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
                 Intent volver_a_login = new Intent(MapsActivity.this,LoginActivity.class);
                 startActivity(volver_a_login);
 
