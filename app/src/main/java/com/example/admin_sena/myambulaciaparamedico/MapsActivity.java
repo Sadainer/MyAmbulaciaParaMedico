@@ -16,15 +16,18 @@ import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedInputStream;
@@ -36,8 +39,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     Context cnt;
-
+    Marker marcadorAmbulancia;
     MyReceiver myReceiver;
+    MyReceiverSignalR receiverSignalR;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,12 +50,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-
         startService(new Intent(MapsActivity.this, ServiceSignalR.class));
         startService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
 
+
         cnt=this;
         mapFragment.getMapAsync(this);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,6 +90,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServicioMyAmbu.MY_ACTION);
         registerReceiver(myReceiver, intentFilter);
+/*
+        receiverSignalR = new MyReceiverSignalR();
+        IntentFilter intentFilter2 = new IntentFilter();
+        intentFilter2.addAction(ServiceSignalR.MY_ACTION2);
+        registerReceiver(receiverSignalR, intentFilter2);
+*/
 
         super.onStart();
     }
@@ -110,8 +121,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .position(location)
                 .title(Titulo));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15.0f));
-
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14.0f));
     }
 
     private class MyReceiver extends BroadcastReceiver{
@@ -123,12 +133,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
             LatLng latLng = new LatLng(la,ln);
-            CrearMarcador(latLng,"Mi_ubicacion");
+            CrearMarcador(latLng,"Ambulancia");
+          /*  if (marcadorAmbulancia!=null){
+                marcadorAmbulancia.remove();
+                marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title("MiPosicion"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+            }else {
+                marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title("MiPosicion"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+            }
+*/
+        }
+    }
+
+    private class MyReceiverSignalR extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+            String mensaje = arg1.getStringExtra("UbicacionPaciente");
+            UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
+
+            if (ubicacionPacienteDto != null) {
+            LatLng    latLngPaciente = new LatLng(ubicacionPacienteDto.getLatitud(),ubicacionPacienteDto.getLongitud());
+                mMap.addMarker(new MarkerOptions()
+                        .position(latLngPaciente)
+                        .title("Paciente"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.0f));
+            }
+
+            if (mensaje!=null){
+                Toast.makeText(MapsActivity.this,"ubicacion recibida en maps: "+mensaje,Toast.LENGTH_SHORT).show();
+                Log.e("Mensaje recibido: ",mensaje);
+            }else{
+                Toast.makeText(MapsActivity.this,"Mensaje nulo",Toast.LENGTH_SHORT).show();
+            }
 
         }
     }
 
 
-
-
 }
+
