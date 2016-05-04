@@ -90,12 +90,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServicioMyAmbu.MY_ACTION);
         registerReceiver(myReceiver, intentFilter);
-/*
+
         receiverSignalR = new MyReceiverSignalR();
         IntentFilter intentFilter2 = new IntentFilter();
         intentFilter2.addAction(ServiceSignalR.MY_ACTION2);
         registerReceiver(receiverSignalR, intentFilter2);
-*/
+
 
         super.onStart();
     }
@@ -133,8 +133,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
             LatLng latLng = new LatLng(la,ln);
-            CrearMarcador(latLng,"Ambulancia");
-          /*  if (marcadorAmbulancia!=null){
+//            CrearMarcador(latLng,"Ambulancia");
+            if (marcadorAmbulancia!=null){
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLng)
@@ -148,7 +148,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
             }
-*/
+
         }
     }
 
