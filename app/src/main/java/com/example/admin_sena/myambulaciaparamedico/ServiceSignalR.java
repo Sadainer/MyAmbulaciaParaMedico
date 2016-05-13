@@ -70,7 +70,7 @@ public class ServiceSignalR extends Service {
 
 
 
-                JsonObject json_data = json.getAsJsonObject();
+                final JsonObject json_data = json.getAsJsonObject();
                 final JsonElement mensaje = json_data.get("A");
 //
                 if (mensaje != null) {
@@ -84,19 +84,16 @@ public class ServiceSignalR extends Service {
                         @Override
                         public void run() {
 
-                            //   Toast.makeText(getApplicationContext(), mensaje.getAsString(), Toast.LENGTH_SHORT).show();
-
+                            //    Toast.makeText(getApplicationContext(), mensaje.getAsString(), Toast.LENGTH_SHORT).show();
+                            UbicacionPacienteDto ubicacionPacienteDto= gson.fromJson(mensaje.getAsString(),UbicacionPacienteDto.class);
+                            Log.e("onMessageReceived", mensaje.getAsString());
+                            Intent intent3 = new Intent();
+                            intent3.setAction(MY_ACTION2);
+                            intent3.putExtra("UbicacionPaciente",mensaje.getAsString());
+                            intent3.putExtra("dto",ubicacionPacienteDto);
+                            sendBroadcast(intent3);
                         }
                     });
-
-                    UbicacionPacienteDto ubicacionPacienteDto= gson.fromJson(mensaje,UbicacionPacienteDto.class);
-                    Log.e("onMessageReceived", mensaje.getAsString());
-                    Intent intent3 = new Intent();
-                    intent3.setAction(MY_ACTION2);
-                    intent3.putExtra("UbicacionPaciente",mensaje.getAsString());
-                    intent3.putExtra("dto",ubicacionPacienteDto);
-
-                    sendBroadcast(intent3);
                 }
             }
         });

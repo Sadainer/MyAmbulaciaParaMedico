@@ -5,5 +5,9 @@
         android:title="@string/st_cerrar_sesion"
         android:orderInCategory="10"
         app:showAsAction="never" />
+    <item android:id="@+id/opt_dibujar_ruta"
+        android:title="@string/st_dibujar_ruta"
+        android:orderInCategory="9"
+        app:showAsAction="never" />
 
 </menu>

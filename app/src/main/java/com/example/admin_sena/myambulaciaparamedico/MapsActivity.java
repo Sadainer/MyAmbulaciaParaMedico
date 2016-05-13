@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -21,19 +23,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.GetAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -42,6 +53,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker marcadorAmbulancia;
     MyReceiver myReceiver;
     MyReceiverSignalR receiverSignalR;
+    private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
+    private LatLng latLngAmbu;
+    private LatLng latLngPaciente;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,13 +65,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
 
         startService(new Intent(MapsActivity.this, ServiceSignalR.class));
-        startService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
+        startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
 
 
         cnt=this;
         mapFragment.getMapAsync(this);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menumapas, menu);
@@ -67,14 +82,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.opt_dibujar_ruta:
+
+                break;
             case R.id.opt_cerrar_sesion:
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("ImLoggedIn", false);
                 editor.commit();
-                stopService(new Intent(MapsActivity.this,ServicioMyAmbu.class));
+                stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
                 Intent volver_a_login = new Intent(MapsActivity.this,LoginActivity.class);
                 startActivity(volver_a_login);
+                break;
 
         }
         return super.onOptionsItemSelected(item);
@@ -97,13 +116,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         registerReceiver(receiverSignalR, intentFilter2);
 
 
+
         super.onStart();
     }
+
+
+
+
 
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
         unregisterReceiver(myReceiver);
+        unregisterReceiver(receiverSignalR);
         super.onStop();
     }
 
@@ -125,6 +150,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private class MyReceiver extends BroadcastReceiver{
+        //Recibo Mi posicion
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
@@ -132,21 +158,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
-            LatLng latLng = new LatLng(la,ln);
+            latLngAmbu = new  LatLng(la,ln);
 //            CrearMarcador(latLng,"Ambulancia");
             if (marcadorAmbulancia!=null){
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
+                        .position(latLngAmbu)
                         .title("MiPosicion"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
             }else {
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
+                        .position(latLngAmbu)
                         .title("MiPosicion"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
             }
 
         }
@@ -157,11 +183,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             // TODO Auto-generated method stub
+
             String mensaje = arg1.getStringExtra("UbicacionPaciente");
             UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
 
             if (ubicacionPacienteDto != null) {
-            LatLng    latLngPaciente = new LatLng(ubicacionPacienteDto.getLatitud(),ubicacionPacienteDto.getLongitud());
+                latLngPaciente = new LatLng(ubicacionPacienteDto.getLatitud(),ubicacionPacienteDto.getLongitud());
                 mMap.addMarker(new MarkerOptions()
                         .position(latLngPaciente)
                         .title("Paciente"));
@@ -178,6 +205,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+
+
 
 
 }
