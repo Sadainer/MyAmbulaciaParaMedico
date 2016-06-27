@@ -72,8 +72,8 @@ public class LoginActivity extends AppCompatActivity {
 
         registro = getSharedPreferences("preferences",MODE_PRIVATE);
         if (registro.getBoolean("ImLoggedIn",false)){
-    //Si ya he iniciado sesion
-//            this.startService(new Intent(this, ServicioMyAmbu.class));
+             //Si ya he iniciado sesion
+//          this.startService(new Intent(this, ServicioMyAmbu.class));
             Intent c = new Intent(LoginActivity.this,MapsActivity.class);
             startActivity(c);
             //Iniciar Servicio
@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 
-                if(output!="Error"){     //////////Si no hay errores////////
+                if(!output.equals("Error")){     //////////Si no hay errores////////
                     /////Convertir Json a LoginDto
                     LoginDto loginExitoso = loginjson.fromJson(output, LoginDto.class);
                     //Asignar Id
@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                     String Pass = loginExitoso.getPassword();
                     //Guardarlas en Sharedpreferences
                     editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass).putBoolean("ImLoggedIn", true);
-                    editor.commit();
+                    editor.apply();
 
                     finish();
 
