@@ -22,20 +22,30 @@ public class Registro2 extends AppCompatActivity {
     Gson Registrojson = new Gson();
     private static String DIR_URL = "http://190.109.185.138:8013/api/paramedicos";
     Context cnt;
+    Button btnRegistro;
+    EditText edtNuevaContraseña;
+    EditText edtNombres;
+    EditText edtApellidos;
+    EditText edtCedula;
+    EditText edtCorreo;
+    EditText edtConfirmarContraseña;
+    EditText edtConfirmarCorreo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro2);
 
         cnt=this;
-        Button btnRegistro = (Button)findViewById(R.id.btnRegistrarse);
-        final EditText edtNombres = (EditText)findViewById(R.id.edtNombres);
-        final EditText edtApellidos =(EditText)findViewById(R.id.edtApellidos);
-        final EditText edtCedula = (EditText)findViewById(R.id.edtCedula);
-        final EditText edtCorreo = (EditText)findViewById(R.id.edtCorreo);
-        final EditText edtConfirmarCorreo = (EditText)findViewById(R.id.edtConfirmarCorreo);
-        final EditText edtNuevaContraseña = (EditText)findViewById(R.id.edtNuevaContraseña);
-        final EditText edtConfirmarContraseña = (EditText)findViewById(R.id.edtRepetircontraseña);
+        btnRegistro = (Button)findViewById(R.id.btnRegistrarse);
+        edtNombres = (EditText)findViewById(R.id.edtNombres);
+        edtApellidos =(EditText)findViewById(R.id.edtApellidos);
+        edtCedula = (EditText)findViewById(R.id.edtCedula);
+        edtCorreo = (EditText)findViewById(R.id.edtCorreo);
+        edtConfirmarCorreo = (EditText)findViewById(R.id.edtConfirmarCorreo);
+        edtNuevaContraseña = (EditText)findViewById(R.id.edtNuevaContraseña);
+        edtConfirmarContraseña = (EditText)findViewById(R.id.edtRepetircontraseña);
+
 
         btnRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +62,6 @@ public class Registro2 extends AppCompatActivity {
                     registro.setPassword(edtNuevaContraseña.getText().toString());
 
                     /////Enviar registro al servidor aqui
-
                     EnviarRegistro(registro);
 
                     Log.e("Registto",Registrojson.toJson(registro));
@@ -79,18 +88,18 @@ public void EnviarRegistro (RegistroDto registroDto){
         @Override
         public void processFinish(String output) {
             Log.e("output", output);
-            if (output!="Error") {
-//                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-//                SharedPreferences.Editor editor = prefs.edit();
-//                RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
-//                editor.putString("Nombres", paramedico.getNombres());
-//                editor.putString("Apellidos", paramedico.getApellidos());
-//                editor.putString("Cedula", paramedico.getCedula());
-//                editor.putString("Correo", paramedico.getCorreo());
-//                editor.putString("Contraseña", paramedico.getPassword());
-//                editor.commit();
+            if (!output.equals("Error")) {
+                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
+                editor.putString("Nombres", paramedico.getNombres());
+                editor.putString("Apellidos", paramedico.getApellidos());
+                editor.putString("Cedula", paramedico.getCedula());
+                editor.putString("Correo", paramedico.getCorreo());
+                editor.putString("Contraseña", paramedico.getPassword());
+                editor.commit();
                 finish();
-//Volver al login
+                //Volver al login
                 Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
                 startActivity(volver_a_login);
 
