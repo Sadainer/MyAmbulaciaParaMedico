@@ -1,4 +1,4 @@
-package com.example.admin_sena.myambulaciaparamedico;
+package com.example.admin_sena.myambulaciaparamedico.Servicios;
 
 import android.app.Service;
 import android.content.Context;
@@ -36,7 +36,7 @@ public class ServiceSignalR extends Service {
     private HubConnection connection;
     private HubProxy proxy;
     Context cnt;
-    final static String MY_ACTION2 = "MY_ACTION_SignalR";
+    public final static String MY_ACTION2 = "MY_ACTION_SignalR";
     Gson gson = new Gson();
     public ServiceSignalR() {
 
@@ -67,7 +67,6 @@ public class ServiceSignalR extends Service {
 
             @Override
             public void onMessageReceived(JsonElement json) {
-
 
 
                 final JsonObject json_data = json.getAsJsonObject();

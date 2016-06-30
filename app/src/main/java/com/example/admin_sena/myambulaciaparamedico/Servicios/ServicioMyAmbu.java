@@ -1,4 +1,4 @@
-package com.example.admin_sena.myambulaciaparamedico;
+package com.example.admin_sena.myambulaciaparamedico.Servicios;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionDto;
+import com.example.admin_sena.myambulaciaparamedico.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -54,7 +55,7 @@ public class ServicioMyAmbu extends Service {
     //Listener de ubicacion
     private LocationListener locationListener = null;
     //My_Action
-    final static String MY_ACTION = "MY_ACTION";
+    public final static String MY_ACTION = "MY_ACTION";
 
     final Gson gsson = new Gson();
 
