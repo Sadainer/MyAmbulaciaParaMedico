@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.example.admin_sena.myambulaciaparamedico.Servicios.ServiceSignalR;
+import com.example.admin_sena.myambulaciaparamedico.Servicios.ServicioMyAmbu;
 
 
 public class MyReceiverInicio extends BroadcastReceiver {

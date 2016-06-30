@@ -38,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     private boolean mBound = false;
     Context context;
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedicos";
+    Button login;
+    Button Registrar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,10 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         ContraseñaView = (EditText) findViewById(R.id.password);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        Button login = (Button) findViewById(R.id.btnLogin);
-        Button Registrar = (Button) findViewById(R.id.btnRegistro);
-
-
+        login = (Button) findViewById(R.id.btnLogin);
+        Registrar = (Button) findViewById(R.id.btnRegistro);
 
        Registrar.setOnClickListener(new OnClickListener() {
            @Override
@@ -73,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
                startActivity(pasar_a_registro);
            }
        });
-
 
         login.setOnClickListener(new OnClickListener() {
         @Override
@@ -84,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
             intentoLogin(login);
             }
         });
-
     }
 
     @Override
@@ -148,7 +146,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
     private void EnviarLogin(final LoginDto login){
         PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
 
@@ -194,5 +191,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        finish();
+        super.onStop();
+    }
 }
-

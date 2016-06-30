@@ -1,21 +1,10 @@
 package com.example.admin_sena.myambulaciaparamedico;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,28 +12,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.GetAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
+import com.example.admin_sena.myambulaciaparamedico.Servicios.ServiceSignalR;
+import com.example.admin_sena.myambulaciaparamedico.Servicios.ServicioMyAmbu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -67,7 +44,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         startService(new Intent(MapsActivity.this, ServiceSignalR.class));
         startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
 
-
         cnt=this;
         mapFragment.getMapAsync(this);
 
@@ -89,10 +65,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("ImLoggedIn", false);
-                editor.commit();
+                editor.apply();
                 stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
                 Intent volver_a_login = new Intent(MapsActivity.this,LoginActivity.class);
                 startActivity(volver_a_login);
+
                 break;
 
         }
@@ -101,7 +78,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
 
         //Register BroadcastReceiver
         //to receive event from our service
@@ -115,13 +91,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         intentFilter2.addAction(ServiceSignalR.MY_ACTION2);
         registerReceiver(receiverSignalR, intentFilter2);
 
-
-
         super.onStart();
     }
-
-
-
 
 
     @Override
@@ -129,6 +100,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // TODO Auto-generated method stub
         unregisterReceiver(myReceiver);
         unregisterReceiver(receiverSignalR);
+        finish();
         super.onStop();
     }
 
@@ -205,8 +177,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
-
-
 
 
 }

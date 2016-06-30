@@ -46,7 +46,6 @@ public class Registro2 extends AppCompatActivity {
         edtNuevaContraseña = (EditText)findViewById(R.id.edtNuevaContraseña);
         edtConfirmarContraseña = (EditText)findViewById(R.id.edtRepetircontraseña);
 
-
         btnRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,11 +73,8 @@ public class Registro2 extends AppCompatActivity {
                         Toast.makeText(cnt,"las contraseñas no son iguales",Toast.LENGTH_SHORT).show();
                     }
                 }
-
-
             }
         });
-
     }
 
 public void EnviarRegistro (RegistroDto registroDto){
