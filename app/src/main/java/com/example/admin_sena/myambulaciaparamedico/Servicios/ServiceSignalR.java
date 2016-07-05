@@ -43,6 +43,14 @@ public class ServiceSignalR extends Service {
     }
 
     @Override
+    public void onDestroy() {
+
+        SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
+        proxy.invoke("LogoutId", prefs.getString("IdAmbulancia", "1"));
+        Log.e("Prueba",prefs.getString("IdAmbulancia", "1"));
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
@@ -53,6 +61,7 @@ public class ServiceSignalR extends Service {
         super.onCreate();
         startConnection();
     }
+
 
     public void startConnection() {
 
@@ -97,6 +106,7 @@ public class ServiceSignalR extends Service {
             }
         });
 
+
         connection.error(new ErrorCallback() {
             @Override
             public void onError(Throwable throwable) {
@@ -109,6 +119,7 @@ public class ServiceSignalR extends Service {
             @Override
             public void run() {
                 System.out.println("Conexion Cerrada");
+
                 /*connection.start();*/
             }
         });
