@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
@@ -33,6 +35,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
     private LatLng latLngAmbu;
     private LatLng latLngPaciente;
+    private TextView txtInfoPedido;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 editor.putBoolean("ImLoggedIn", false);
                 editor.apply();
                 stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
+                stopService(new Intent(MapsActivity.this, ServiceSignalR.class));
                 Intent volver_a_login = new Intent(MapsActivity.this,LoginActivity.class);
                 startActivity(volver_a_login);
 
@@ -154,7 +158,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
-            // TODO Auto-generated method stub
 
             String mensaje = arg1.getStringExtra("UbicacionPaciente");
             UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
@@ -166,6 +169,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("Paciente"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.0f));
+                txtInfoPedido.setVisibility(View.VISIBLE);
+                txtInfoPedido.setText("Direccion: "+ubicacionPacienteDto.getDireccion()+" IdServicio "+ubicacionPacienteDto.getIdPaciente()+ " Tipo de emergencia: "+ ubicacionPacienteDto.getTipoemergencia());
             }
 
             if (mensaje!=null){

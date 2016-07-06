@@ -42,6 +42,7 @@ public class ServiceSignalR extends Service {
 
     }
 
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -52,6 +53,12 @@ public class ServiceSignalR extends Service {
     public void onCreate() {
         super.onCreate();
         startConnection();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e("ServiceSignalR","onDestroy");
+        super.onDestroy();
     }
 
     public void startConnection() {

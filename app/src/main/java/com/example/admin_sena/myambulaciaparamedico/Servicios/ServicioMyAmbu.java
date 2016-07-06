@@ -154,7 +154,6 @@ public class ServicioMyAmbu extends Service {
 
 
 
-
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
     //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
     private class MiUbicacion implements LocationListener
