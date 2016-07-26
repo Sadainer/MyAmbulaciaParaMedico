@@ -125,7 +125,6 @@ public class ServicioMyAmbu extends Service {
     private void EnviarUbicacion(Location location){
 
 
-
         UbicacionDto ubicacion = new UbicacionDto();
         SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
         ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
@@ -151,7 +150,6 @@ public class ServicioMyAmbu extends Service {
         }
 
     }
-
 
 
     //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un

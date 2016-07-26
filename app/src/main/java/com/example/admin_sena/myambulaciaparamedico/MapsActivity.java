@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,9 +22,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -32,10 +42,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker marcadorAmbulancia;
     MyReceiver myReceiver;
     MyReceiverSignalR receiverSignalR;
-    private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
+   // private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
     private LatLng latLngAmbu;
     private LatLng latLngPaciente;
-    private TextView txtInfoPedido;
+    private Clinica clinicaAsignada;
+    FirebaseDatabase database;
+    DatabaseReference reference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +61,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         cnt=this;
         mapFragment.getMapAsync(this);
+     //   database = FirebaseDatabase.getInstance();
+       // reference = database.getReference("");
+       /* reference.child("Pedido2").child("Cancelado").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean s = (boolean)dataSnapshot.getValue();
+                if (s){
+                    Toast.makeText(MapsActivity.this,"Pedido cancelado",Toast.LENGTH_LONG).show();
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
     }
 
     @Override
@@ -114,17 +141,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
     }
-
+/*
     public void CrearMarcador(LatLng location, String Titulo)
     {
-        mMap.clear();
         mMap.addMarker(new MarkerOptions()
                 .position(location)
                 .title(Titulo));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14.0f));
     }
-
+*/
     private class MyReceiver extends BroadcastReceiver{
         //Recibo Mi posicion
 
@@ -140,13 +166,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
-                        .title("MiPosicion"));
+                        .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
             }else {
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
-                        .title("MiPosicion"));
+                        .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
             }
@@ -160,17 +186,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void onReceive(Context arg0, Intent arg1) {
 
             String mensaje = arg1.getStringExtra("UbicacionPaciente");
-            UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
+            final UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
 
             if (ubicacionPacienteDto != null) {
                 latLngPaciente = new LatLng(ubicacionPacienteDto.getLatitud(),ubicacionPacienteDto.getLongitud());
-                mMap.addMarker(new MarkerOptions()
+                Marker marcador =  mMap.addMarker(new MarkerOptions()
                         .position(latLngPaciente)
-                        .title("Paciente"));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
+                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                    @Override
+                    public View getInfoWindow(Marker marker) {
+                        return null;
+                    }
+
+                    @Override
+                    public View getInfoContents(Marker marker) {
+                        View v = getLayoutInflater().inflate(R.layout.info_box,null);
+                        TextView tvInfo = (TextView)v.findViewById(R.id.tvInfo);
+                        tvInfo.setText("Tipo: "+ubicacionPacienteDto.getTipoemergencia()+"\n"+"Pacientes: "+
+                                String.valueOf(ubicacionPacienteDto.getNumeroPacientes()));
+                        return v;
+                    }
+                });
+                marcador.setTitle(ubicacionPacienteDto.getDireccion());
+                marcador.showInfoWindow();
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.0f));
-                txtInfoPedido.setVisibility(View.VISIBLE);
-                txtInfoPedido.setText("Direccion: "+ubicacionPacienteDto.getDireccion()+" IdServicio "+ubicacionPacienteDto.getIdPaciente()+ " Tipo de emergencia: "+ ubicacionPacienteDto.getTipoemergencia());
+                buscarClinica(latLngPaciente);
             }
 
             if (mensaje!=null){
@@ -183,6 +225,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void buscarClinica(LatLng latLngPaciente) {
+        Location location = new Location("");
+        location.setLongitude(latLngPaciente.longitude);
+        location.setLatitude(latLngPaciente.latitude);
+
+        ListaClinicas lista = new ListaClinicas();
+        ArrayList<Float> a = new ArrayList<>();
+
+        for (int i=0; i < lista.listaClinicas.size();i++ ){
+            a.add(location.distanceTo(lista.listaClinicas.get(i).getUbicacion()));
+        }
+        for (int i=0; i < a.size();i++ ){
+
+            Log.e("distancia: ",String.valueOf(a.get(i)));
+        }
+        int j = a.indexOf(Collections.min(a));
+        Log.e("el menor es: ",String.valueOf(a.get(j)));
+
+        clinicaAsignada = lista.listaClinicas.get(j);
+        Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
+                Toast.LENGTH_LONG).show();
+    }
 
 }
-
