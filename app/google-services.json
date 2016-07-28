@@ -1,0 +1,104 @@
+{
+  "project_info": {
+    "project_number": "599868978816",
+    "firebase_url": "https://mi-ambulancia.firebaseio.com",
+    "project_id": "mi-ambulancia",
+    "storage_bucket": "mi-ambulancia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599868978816:android:82443596301d8094",
+        "android_client_info": {
+          "package_name": "com.example.admin_sena.miambulacia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599868978816-8mmas80i92csskkk8q6e6d0jhbj8fiht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNbqhDGZ6lfwGwmnFcOaZUtU3B4_Mk9Ss"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599868978816:android:0ee2fdba2558db91",
+        "android_client_info": {
+          "package_name": "com.example.oscar.examplefirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599868978816-8mmas80i92csskkk8q6e6d0jhbj8fiht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNbqhDGZ6lfwGwmnFcOaZUtU3B4_Mk9Ss"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599868978816:android:c7c0f0e9c8aa4357",
+        "android_client_info": {
+          "package_name": "com.example.admin_sena.myambulaciaparamedico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599868978816-8mmas80i92csskkk8q6e6d0jhbj8fiht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNbqhDGZ6lfwGwmnFcOaZUtU3B4_Mk9Ss"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

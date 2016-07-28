@@ -189,6 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             final UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
 
             if (ubicacionPacienteDto != null) {
+                Log.e("Direccion Paciente",ubicacionPacienteDto.getDireccion());
                 latLngPaciente = new LatLng(ubicacionPacienteDto.getLatitud(),ubicacionPacienteDto.getLongitud());
                 Marker marcador =  mMap.addMarker(new MarkerOptions()
                         .position(latLngPaciente)
@@ -216,10 +217,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             if (mensaje!=null){
-                Toast.makeText(MapsActivity.this,"ubicacion recibida en maps: "+mensaje,Toast.LENGTH_SHORT).show();
+
                 Log.e("Mensaje recibido: ",mensaje);
             }else{
-                Toast.makeText(MapsActivity.this,"Mensaje nulo",Toast.LENGTH_SHORT).show();
+
             }
 
         }
