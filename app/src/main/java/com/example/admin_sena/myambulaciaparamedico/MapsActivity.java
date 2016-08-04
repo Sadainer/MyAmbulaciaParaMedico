@@ -26,11 +26,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -204,7 +201,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public View getInfoContents(Marker marker) {
                         View v = getLayoutInflater().inflate(R.layout.info_box,null);
                         TextView tvInfo = (TextView)v.findViewById(R.id.tvInfo);
-                        tvInfo.setText("Tipo: "+ubicacionPacienteDto.getTipoemergencia()+"\n"+"Pacientes: "+
+                        tvInfo.setText("Direccion: "+ubicacionPacienteDto.getDireccion()+"\n"+"Pacientes: "+
                                 String.valueOf(ubicacionPacienteDto.getNumeroPacientes()));
                         return v;
                     }
