@@ -199,7 +199,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     @Override
                     public View getInfoContents(Marker marker) {
-                        View v = getLayoutInflater().inflate(R.layout.info_box,null);
+                        View v = getLayoutInflater().inflate(R.layout.info_box, null);
                         TextView tvInfo = (TextView)v.findViewById(R.id.tvInfo);
                         tvInfo.setText("Direccion: "+ubicacionPacienteDto.getDireccion()+"\n"+"Pacientes: "+
                                 String.valueOf(ubicacionPacienteDto.getNumeroPacientes()));

@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionDto;
 import com.example.admin_sena.myambulaciaparamedico.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -56,7 +58,10 @@ public class ServicioMyAmbu extends Service {
     private LocationListener locationListener = null;
     //My_Action
     public final static String MY_ACTION = "MY_ACTION";
-
+    FirebaseDatabase database;
+    DatabaseReference reference;
+    DatabaseReference miAmbulancia;
+    UbicacionDto ubicacion = new UbicacionDto();
     final Gson gsson = new Gson();
 
     NotificationManager nm ;
@@ -70,7 +75,8 @@ public class ServicioMyAmbu extends Service {
         super.onCreate();
         cnt= getApplicationContext();
         System.out.println("Servicio Iniciado");
-
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("");
     }
 
     @Override
@@ -103,8 +109,14 @@ public class ServicioMyAmbu extends Service {
             Intent intent2 = new Intent();
             intent2.setAction(MY_ACTION);
             intent2.putExtra("LatAmbu",LatAmbu).putExtra("LngAmbu",LngAmbu);
-
             sendBroadcast(intent2);
+
+            SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
+            ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
+            ubicacion.setLatitud(LatAmbu);
+            ubicacion.setLongitud(LngAmbu);
+            reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).setValue(ubicacion);
+
             Log.e("broadcast enviado",String.valueOf(posicionActual.getLatitude()));
             EnviarUbicacion(posicionActual);
         }
@@ -125,12 +137,13 @@ public class ServicioMyAmbu extends Service {
     private void EnviarUbicacion(Location location){
 
 
-        UbicacionDto ubicacion = new UbicacionDto();
-        SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
-        ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
+
+
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
         Log.e("Envio Posicion",gsson.toJson(ubicacion) );
+        reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("latitud").setValue(location.getLatitude());
+        reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("longitud").setValue(location.getLongitude());
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
@@ -208,5 +221,13 @@ public class ServicioMyAmbu extends Service {
             nm.notify(notificationID, noti);
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        miAmbulancia = reference.child("Ambulancias").child(ubicacion.getIdAmbulancia());
+        miAmbulancia.removeValue();
+        Log.e("Remover Ambulancia","106565" );
     }
 }
