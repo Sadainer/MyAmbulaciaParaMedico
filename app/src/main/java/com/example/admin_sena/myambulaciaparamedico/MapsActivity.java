@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -58,22 +61,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         cnt=this;
         mapFragment.getMapAsync(this);
-     //   database = FirebaseDatabase.getInstance();
-       // reference = database.getReference("");
-       /* reference.child("Pedido2").child("Cancelado").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean s = (boolean)dataSnapshot.getValue();
-                if (s){
-                    Toast.makeText(MapsActivity.this,"Pedido cancelado",Toast.LENGTH_LONG).show();
-                }
-            }
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference("");
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     @Override
@@ -122,7 +112,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onStart();
     }
 
-
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
@@ -132,22 +121,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onStop();
     }
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
     }
-/*
-    public void CrearMarcador(LatLng location, String Titulo)
-    {
-        mMap.addMarker(new MarkerOptions()
-                .position(location)
-                .title(Titulo));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14.0f));
-    }
-*/
+
     private class MyReceiver extends BroadcastReceiver{
         //Recibo Mi posicion
 
@@ -212,7 +191,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.0f));
                 buscarClinica(latLngPaciente);
             }
+            reference.child("Pedidos").child("Pedido"+ubicacionPacienteDto.getIdPaciente()).addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Toast.makeText(MapsActivity.this,s,Toast.LENGTH_SHORT).show();
+                }
 
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             if (mensaje!=null){
 
                 Log.e("Mensaje recibido: ",mensaje);

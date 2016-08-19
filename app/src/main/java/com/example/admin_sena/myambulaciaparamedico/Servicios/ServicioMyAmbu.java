@@ -228,6 +228,5 @@ public class ServicioMyAmbu extends Service {
         super.onDestroy();
         miAmbulancia = reference.child("Ambulancias").child(ubicacion.getIdAmbulancia());
         miAmbulancia.removeValue();
-        Log.e("Remover Ambulancia","106565" );
     }
 }
