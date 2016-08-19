@@ -191,10 +191,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.0f));
                 buscarClinica(latLngPaciente);
             }
-            reference.child("Pedidos").child("Pedido"+ubicacionPacienteDto.getIdPaciente()).addChildEventListener(new ChildEventListener() {
+            reference.child("Pedidos").child("Pedido"+ubicacionPacienteDto.getIdPaciente()).child("Cancelado").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Toast.makeText(MapsActivity.this,s,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this,"PEDIDO CANCELADOOOOO",Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
