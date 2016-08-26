@@ -1,17 +1,14 @@
-package com.example.admin_sena.myambulaciaparamedico.Servicios;
+package com.example.admin_sena.myambulaciaparamedico.servicios;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -21,11 +18,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionDto;
@@ -33,9 +28,6 @@ import com.example.admin_sena.myambulaciaparamedico.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.concurrent.ExecutionException;
 
@@ -69,7 +61,6 @@ public class ServicioMyAmbu extends Service {
     public ServicioMyAmbu() {
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -94,7 +85,6 @@ public class ServicioMyAmbu extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             }
         }
         //Obtenemos la ultima ubicacion registrada en el equipo
@@ -136,9 +126,6 @@ public class ServicioMyAmbu extends Service {
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(Location location){
 
-
-
-
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
         Log.e("Envio Posicion",gsson.toJson(ubicacion) );
@@ -147,7 +134,7 @@ public class ServicioMyAmbu extends Service {
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
-
+                Log.e("Posicion "," enviada al servidor");
             }
         });
         System.out.println(gsson.toJson(ubicacion));
@@ -172,7 +159,7 @@ public class ServicioMyAmbu extends Service {
         int notificationID = 1;
         @Override
         public void onLocationChanged(Location location) {
-
+            Log.e("Posicion "," cambiada");
             EnviarUbicacion(location);
         }
 

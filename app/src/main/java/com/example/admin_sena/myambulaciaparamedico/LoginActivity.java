@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.LoginDto;
-import com.example.admin_sena.myambulaciaparamedico.Servicios.ServiceSignalR;
+import com.example.admin_sena.myambulaciaparamedico.servicios.ServiceSignalR;
 import com.google.gson.Gson;
 
 import java.util.concurrent.ExecutionException;
@@ -49,17 +49,13 @@ public class LoginActivity extends AppCompatActivity {
         registro = getSharedPreferences("preferences",MODE_PRIVATE);
         if (registro.getBoolean("ImLoggedIn",false)){
              //Si ya he iniciado sesion
-//          this.startService(new Intent(this, ServicioMyAmbu.class));
             Intent c = new Intent(LoginActivity.this,MapsActivity.class);
             startActivity(c);
             //Iniciar Servicio
-
             finish();
-
         }
         // Set up the login form.
         CedulaView = (AutoCompleteTextView) findViewById(R.id.email);
-
         ContraseñaView = (EditText) findViewById(R.id.password);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -88,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menulogin, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -109,12 +104,6 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
         String Cedula= CedulaView.getText().toString();
-
-
-            // Crear Objeto loginDto con los datos que el usuario ingresó
-        //////////// Enviar  Objeto al servidor, debe devolver un "Ok" en caso de que los datos sean correctos//////////
-
-
         // Verifica que la variable password no este vacia
         if (TextUtils.isEmpty(loginDto.getPassword())){
             ContraseñaView.setError(getString(R.string.error_invalid_password));
@@ -133,14 +122,11 @@ public class LoginActivity extends AppCompatActivity {
             cancel = true;
         }else { //
             Log.e("Antesdeenviar", loginjson.toJson(loginDto));
-
             EnviarLogin(loginDto);
             //No hubo errores
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         }
 

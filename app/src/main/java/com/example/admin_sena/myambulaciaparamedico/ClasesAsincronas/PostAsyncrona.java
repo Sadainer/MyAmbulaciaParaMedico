@@ -16,10 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by Sadainer Hernandez on 09/03/2015.
- * Clase para consumir servicios rest mediante el metodo GET
- */
+
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     public interface AsyncResponse {
@@ -32,7 +29,6 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     HttpURLConnection connection;
     Context cnt;
 
-
     public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
         mData = data;
         cnt= context;
@@ -43,20 +39,13 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     }
 
-
     //Variable ruta se guarda la URI del servicio GET a consumir
-
-
-
 
     @Override
     protected String doInBackground(String... params) {
         String mensajeRespuesta = "";
         try {
-
-
             url = new URL(params[0]);
-
             connection = (HttpURLConnection)url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -66,12 +55,10 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             dStream.writeBytes(mData);
             dStream.flush();
             dStream.close();
-
             //Read
             StringBuilder sb = null;
             BufferedReader br = null;
             //here is the problem
-
             int responseCode=connection.getResponseCode();
             Log.e("respondeCode",String.valueOf(responseCode));
             if(responseCode==HttpURLConnection.HTTP_ACCEPTED || responseCode==HttpURLConnection.HTTP_OK

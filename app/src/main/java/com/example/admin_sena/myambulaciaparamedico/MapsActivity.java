@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
-import com.example.admin_sena.myambulaciaparamedico.Servicios.ServiceSignalR;
-import com.example.admin_sena.myambulaciaparamedico.Servicios.ServicioMyAmbu;
+import com.example.admin_sena.myambulaciaparamedico.servicios.ServiceSignalR;
+import com.example.admin_sena.myambulaciaparamedico.servicios.ServicioMyAmbu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -55,10 +55,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
         startService(new Intent(MapsActivity.this, ServiceSignalR.class));
         startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
-
         cnt=this;
         mapFragment.getMapAsync(this);
         database = FirebaseDatabase.getInstance();
@@ -132,10 +130,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
-            // TODO Auto-generated method stub
 
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
+       //     Toast.makeText(MapsActivity.this,String.valueOf(la)+" " + String.valueOf(ln),Toast.LENGTH_SHORT).show();
             latLngAmbu = new  LatLng(la,ln);
 //            CrearMarcador(latLng,"Ambulancia");
             if (marcadorAmbulancia!=null){
@@ -146,6 +144,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
             }else {
+
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
@@ -218,10 +217,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
             if (mensaje!=null){
-
                 Log.e("Mensaje recibido: ",mensaje);
             }else{
-
             }
 
         }

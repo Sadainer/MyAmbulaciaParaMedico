@@ -1,33 +1,26 @@
-package com.example.admin_sena.myambulaciaparamedico.Servicios;
+package com.example.admin_sena.myambulaciaparamedico.servicios;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.concurrent.ExecutionException;
-
 import microsoft.aspnet.signalr.client.Action;
 import microsoft.aspnet.signalr.client.ConnectionState;
-import microsoft.aspnet.signalr.client.Credentials;
 import microsoft.aspnet.signalr.client.ErrorCallback;
 import microsoft.aspnet.signalr.client.MessageReceivedHandler;
 import microsoft.aspnet.signalr.client.Platform;
-import microsoft.aspnet.signalr.client.SignalRFuture;
 import microsoft.aspnet.signalr.client.StateChangedCallback;
-import microsoft.aspnet.signalr.client.http.Request;
 import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
 import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;

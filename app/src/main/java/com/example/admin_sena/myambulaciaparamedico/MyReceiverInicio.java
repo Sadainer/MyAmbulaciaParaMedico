@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.admin_sena.myambulaciaparamedico.Servicios.ServiceSignalR;
-import com.example.admin_sena.myambulaciaparamedico.Servicios.ServicioMyAmbu;
+import com.example.admin_sena.myambulaciaparamedico.servicios.ServiceSignalR;
+import com.example.admin_sena.myambulaciaparamedico.servicios.ServicioMyAmbu;
 
 
 public class MyReceiverInicio extends BroadcastReceiver {
