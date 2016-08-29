@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -42,12 +44,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker marcadorAmbulancia;
     MyReceiver myReceiver;
     MyReceiverSignalR receiverSignalR;
-   // private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
+    // private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
     private LatLng latLngAmbu;
     private LatLng latLngPaciente;
     private Clinica clinicaAsignada;
     FirebaseDatabase database;
     DatabaseReference reference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +60,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         startService(new Intent(MapsActivity.this, ServiceSignalR.class));
         startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
-        cnt=this;
+        cnt = this;
         mapFragment.getMapAsync(this);
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
@@ -72,7 +75,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.opt_dibujar_ruta:
 
                 break;
@@ -83,7 +86,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 editor.apply();
                 stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
                 stopService(new Intent(MapsActivity.this, ServiceSignalR.class));
-                Intent volver_a_login = new Intent(MapsActivity.this,LoginActivity.class);
+                Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
                 startActivity(volver_a_login);
 
                 break;
@@ -122,6 +125,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
 
     }
 
@@ -142,7 +150,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .position(latLngAmbu)
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
+              //  Toast.makeText(MapsActivity.this,"latitud: "+String.valueOf(la)+" longitud" + String.valueOf(ln),Toast.LENGTH_SHORT).show();
             }else {
 
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
@@ -150,6 +159,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
+
             }
 
         }
@@ -187,7 +197,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 marcador.setTitle(ubicacionPacienteDto.getDireccion());
                 marcador.showInfoWindow();
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.0f));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.5f));
                 buscarClinica(latLngPaciente);
             }
             reference.child("Pedidos").child("Pedido"+ubicacionPacienteDto.getIdPaciente()).child("Cancelado").addChildEventListener(new ChildEventListener() {

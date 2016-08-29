@@ -36,18 +36,8 @@ public class ServicioMyAmbu extends Service {
 
     Context cnt;
 
-    //Variables gestion Ubicacion
-    private LocationManager locationMangaer = null;
     //Variable para guardar al mejor proveedor para obtener la ubicacion
     String MejorProveedor=null;
-    // Variables de URI del servicio
-    private static String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
-    //Variable que controla el tiempo en que se actualiza la ubicacion en segundos
-    private static int TIEMPO_ACTUALIZACION=20000;
-    //Variable que controla la actualizacion del radio de movimiento de la ambulancia en metros
-    private static int RADIO_ACTUALIZACION=5;
-    //Listener de ubicacion
-    private LocationListener locationListener = null;
     //My_Action
     public final static String MY_ACTION = "MY_ACTION";
     FirebaseDatabase database;
@@ -55,9 +45,10 @@ public class ServicioMyAmbu extends Service {
     DatabaseReference miAmbulancia;
     UbicacionDto ubicacion = new UbicacionDto();
     final Gson gsson = new Gson();
-
+    Intent intent2;
     NotificationManager nm ;
 
+    double LatAmbu, LngAmbu;
     public ServicioMyAmbu() {
     }
 
@@ -73,18 +64,19 @@ public class ServicioMyAmbu extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
+        LocationManager locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
-        req.setAltitudeRequired(true);
+
 
         //Mejor proveedor por criterio
         MejorProveedor = locationMangaer.getBestProvider(req, false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             }
         }
         //Obtenemos la ultima ubicacion registrada en el equipo
@@ -94,12 +86,9 @@ public class ServicioMyAmbu extends Service {
         if (posicionActual != null) {
             System.out.println(posicionActual.getLatitude() + "   " + posicionActual.getLongitude());
 
-            double LatAmbu= posicionActual.getLatitude();
-            double LngAmbu= posicionActual.getLongitude();
-            Intent intent2 = new Intent();
-            intent2.setAction(MY_ACTION);
-            intent2.putExtra("LatAmbu",LatAmbu).putExtra("LngAmbu",LngAmbu);
-            sendBroadcast(intent2);
+            LatAmbu= posicionActual.getLatitude();
+            LngAmbu= posicionActual.getLongitude();
+
 
             SharedPreferences prefs= getSharedPreferences("preferences",MODE_PRIVATE);
             ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
@@ -111,8 +100,12 @@ public class ServicioMyAmbu extends Service {
             EnviarUbicacion(posicionActual);
         }
 
-        locationListener = new MiUbicacion();
+        LocationListener locationListener = new MiUbicacion();
+
+        int RADIO_ACTUALIZACION = 5;
+        int TIEMPO_ACTUALIZACION = 19000;
         locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
+
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -126,6 +119,10 @@ public class ServicioMyAmbu extends Service {
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(Location location){
 
+        intent2 = new Intent();
+        intent2.setAction(MY_ACTION);
+        intent2.putExtra("LatAmbu",LatAmbu).putExtra("LngAmbu",LngAmbu);
+        sendBroadcast(intent2);
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
         Log.e("Envio Posicion",gsson.toJson(ubicacion) );
@@ -137,8 +134,10 @@ public class ServicioMyAmbu extends Service {
                 Log.e("Posicion "," enviada al servidor");
             }
         });
+
         System.out.println(gsson.toJson(ubicacion));
         try {
+            String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
             EnviarUbicacion.execute(DIR_URL).get();
             System.out.println("Ok");
         } catch (InterruptedException e) {
