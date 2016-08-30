@@ -141,24 +141,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
-       //     Toast.makeText(MapsActivity.this,String.valueOf(la)+" " + String.valueOf(ln),Toast.LENGTH_SHORT).show();
             latLngAmbu = new  LatLng(la,ln);
 //            CrearMarcador(latLng,"Ambulancia");
             if (marcadorAmbulancia!=null){
-                marcadorAmbulancia.remove();
-                marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
-                        .position(latLngAmbu)
-                        .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
+                Log.e("Marcador","nuevo");
+                marcadorAmbulancia.setPosition(latLngAmbu);
+                //marcadorAmbulancia.remove();
+                //marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
+                  //      .position(latLngAmbu)
+                    //    .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
-              //  Toast.makeText(MapsActivity.this,"latitud: "+String.valueOf(la)+" longitud" + String.valueOf(ln),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this,"latitud: "+String.valueOf(la)+" longitud" + String.valueOf(ln),Toast.LENGTH_SHORT).show();
             }else {
-
+                Log.e("Marcador","creado");
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
+
+
 
             }
 
