@@ -145,14 +145,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            CrearMarcador(latLng,"Ambulancia");
             if (marcadorAmbulancia!=null){
                 Log.e("Marcador","nuevo");
-                marcadorAmbulancia.setPosition(latLngAmbu);
+                marcadorAmbulancia.remove();
+                mMap.addMarker(new MarkerOptions()
+                        .position(latLngAmbu));
+                //marcadorAmbulancia.setPosition(latLngAmbu);
                 //marcadorAmbulancia.remove();
                 //marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                   //      .position(latLngAmbu)
                     //    .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
-                Toast.makeText(MapsActivity.this,"latitud: "+String.valueOf(la)+" longitud" + String.valueOf(ln),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this,"latitud: "+marcadorAmbulancia.getPosition(),Toast.LENGTH_SHORT).show();
             }else {
                 Log.e("Marcador","creado");
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
@@ -160,8 +163,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
-
-
 
             }
 
