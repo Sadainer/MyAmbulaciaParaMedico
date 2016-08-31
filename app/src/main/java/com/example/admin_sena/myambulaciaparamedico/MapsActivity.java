@@ -143,6 +143,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             double ln = arg1.getDoubleExtra("LngAmbu",0);
             latLngAmbu = new  LatLng(la,ln);
 //            CrearMarcador(latLng,"Ambulancia");
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLngAmbu)
+                    .title("Ambulancia"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
+            /*
             if (marcadorAmbulancia!=null){
                 Log.e("Marcador","nuevo");
                 marcadorAmbulancia.remove();
@@ -164,7 +170,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
 
-            }
+            }*/
 
         }
     }
