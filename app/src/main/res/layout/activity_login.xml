@@ -30,18 +30,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView android:src="@drawable/ic_launcher2"
+                android:layout_width="100dp"
+                android:layout_height="92dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="25dp"
+                android:layout_gravity="center_horizontal" />
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cedula_login"
+
                     android:inputType="number"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:textSize="16sp"
                     android:autoText="false" />
 
             </android.support.design.widget.TextInputLayout>
@@ -70,19 +80,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="@string/action_sign_in"
                 android:background="@drawable/selector_boton_normal"
                 android:textColor="#ffffff" />
 
             <Button
-                style="?android:textAppearanceSmall"
+
                 android:id="@+id/btnRegistro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/registro1"
                 android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/selector_boton_normal"
                 android:textColor="#ffffff" />

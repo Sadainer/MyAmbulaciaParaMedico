@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#c7045f</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorTexto">#ffffff</color>
+
+
+
+    <color name="back">#5E35B1
+    </color>
+
 </resources>
