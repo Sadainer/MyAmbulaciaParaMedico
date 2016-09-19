@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedicos";
     Button login;
     Button Registrar;
+    LoginDto loginDto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +63,10 @@ public class LoginActivity extends AppCompatActivity {
         login = (Button) findViewById(R.id.btnLogin);
         Registrar = (Button) findViewById(R.id.btnRegistro);
 
+        if (!(registro.getString("Usuario","").isEmpty())){
+            CedulaView.setText((registro.getString("Usuario","a")));
+            ContraseñaView.requestFocus();
+        }
        Registrar.setOnClickListener(new OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -73,10 +78,10 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-            LoginDto login = new LoginDto();
-            login.setPassword(ContraseñaView.getText().toString());
-            login.setCedula(CedulaView.getText().toString());
-            intentoLogin(login);
+            loginDto = new LoginDto();
+            loginDto.setPassword(ContraseñaView.getText().toString());
+            loginDto.setCedula(CedulaView.getText().toString());
+            intentoLogin(loginDto);
             }
         });
     }
@@ -142,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
 
+                SharedPreferences.Editor e = registro.edit();
                 if(!output.equals("Error")){     //////////Si no hay errores////////
                     /////Convertir Json a LoginDto
                     LoginDto loginExitoso = loginjson.fromJson(output, LoginDto.class);
@@ -153,6 +159,8 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass).putBoolean("ImLoggedIn", true);
                     editor.apply();
 
+                    e.putString("Usuario",loginDto.getCedula());
+                    e.apply();
                     finish();
 
                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
