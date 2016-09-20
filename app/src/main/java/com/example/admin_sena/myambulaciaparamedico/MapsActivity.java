@@ -145,13 +145,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             latLngAmbu = new  LatLng(la,ln);
 
 
-
             if (marcadorAmbulancia!=null){
                 Log.e("Marcador","nuevo");
-                marcadorAmbulancia.remove();
-                mMap.addMarker(new MarkerOptions()
-                        .position(latLngAmbu));
-                marcadorAmbulancia.setPosition(latLngAmbu);
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
