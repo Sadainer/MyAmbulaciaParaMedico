@@ -257,6 +257,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         clinicaAsignada = lista.listaClinicas.get(j);
         Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
                 Toast.LENGTH_LONG).show();
+        reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
+
+
     }
 
 }
