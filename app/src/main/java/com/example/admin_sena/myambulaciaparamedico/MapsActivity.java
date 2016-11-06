@@ -162,9 +162,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
-
             }
-
         }
     }
 
