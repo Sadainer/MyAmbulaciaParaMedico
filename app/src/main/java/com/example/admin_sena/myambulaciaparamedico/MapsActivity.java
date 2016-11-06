@@ -50,7 +50,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Clinica clinicaAsignada;
     FirebaseDatabase database;
     DatabaseReference reference;
-
+    UbicacionPacienteDto ubicacionPacienteDto;
+    String idAmbulancia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,17 +143,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
+            idAmbulancia = arg1.getStringExtra("IdAmbulancia");
             latLngAmbu = new  LatLng(la,ln);
 
-
             if (marcadorAmbulancia!=null){
-                Log.e("Marcador","nuevo");
+                Log.e("Marcador","nuevo"); // nueva posicion
                 marcadorAmbulancia.remove();
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
+              //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
+              //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
                 Toast.makeText(MapsActivity.this,"latitud: "+marcadorAmbulancia.getPosition(),Toast.LENGTH_SHORT).show();
             }else {
                 Log.e("Marcador","creado");
@@ -173,7 +174,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void onReceive(Context arg0, Intent arg1) {
 
             String mensaje = arg1.getStringExtra("UbicacionPaciente");
-            final UbicacionPacienteDto ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
+            ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
 
             if (ubicacionPacienteDto != null) {
                 Log.e("Direccion Paciente",ubicacionPacienteDto.getDireccion());
@@ -257,6 +258,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         clinicaAsignada = lista.listaClinicas.get(j);
         Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
                 Toast.LENGTH_LONG).show();
+        clinicaAsignada.setIdPaciente(String.valueOf(ubicacionPacienteDto.getIdPaciente()));
+        clinicaAsignada.setIdAmbulancia(idAmbulancia);
+
         reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
 
 

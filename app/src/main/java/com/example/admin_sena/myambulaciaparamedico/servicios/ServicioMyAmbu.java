@@ -145,7 +145,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
 
         intent2 = new Intent();
         intent2.setAction(MY_ACTION);
-        intent2.putExtra("LatAmbu", LatAmbu).putExtra("LngAmbu", LngAmbu);
+        intent2.putExtra("LatAmbu", LatAmbu).putExtra("LngAmbu", LngAmbu).putExtra("IdAmbulancia",ubicacion.getIdAmbulancia());
         sendBroadcast(intent2);
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());

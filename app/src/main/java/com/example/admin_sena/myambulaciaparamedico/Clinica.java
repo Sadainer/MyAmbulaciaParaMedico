@@ -9,7 +9,8 @@ public class Clinica {
     private String direccion;
     private String nombre;
     private Location ubicacion;
-
+    private String IdAmbulancia;
+    private String IdPaciente;
     public Clinica(String nombre, String direccion, LatLng ubicacion) {
         this.nombre = nombre;
         this.direccion = direccion;
@@ -40,5 +41,21 @@ public class Clinica {
 
     public void setUbicacion(Location ubicacion) {
         this.ubicacion = ubicacion;
+    }
+
+    public String getIdAmbulancia() {
+        return IdAmbulancia;
+    }
+
+    public void setIdAmbulancia(String idAmbulancia) {
+        IdAmbulancia = idAmbulancia;
+    }
+
+    public String getIdPaciente() {
+        return IdPaciente;
+    }
+
+    public void setIdPaciente(String idPaciente) {
+        IdPaciente = idPaciente;
     }
 }
