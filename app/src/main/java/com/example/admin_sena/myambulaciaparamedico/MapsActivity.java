@@ -140,6 +140,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
+            //Se ha actualizado la posicion de la ambulancia
 
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
@@ -148,13 +149,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (marcadorAmbulancia!=null){
                 Log.e("Marcador","nuevo"); // nueva posicion
-                marcadorAmbulancia.remove();
+
+                marcadorAmbulancia.setPosition(latLngAmbu);
+                /*marcadorAmbulancia.remove();
+
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)
                         .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
-              //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
+              */
+                //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
               //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
-                Toast.makeText(MapsActivity.this,"latitud: "+marcadorAmbulancia.getPosition(),Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(MapsActivity.this,"latitud: "+marcadorAmbulancia.getPosition(),Toast.LENGTH_SHORT).show();
             }else {
                 Log.e("Marcador","creado");
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
