@@ -28,6 +28,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,6 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     DatabaseReference reference;
     UbicacionPacienteDto ubicacionPacienteDto;
     String idAmbulancia;
+    boolean flag =true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,9 +151,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             latLngAmbu = new  LatLng(la,ln);
 
             if (marcadorAmbulancia!=null){
-                Log.e("Marcador","nuevo"); // nueva posicion
 
-                marcadorAmbulancia.setPosition(latLngAmbu);
+                if (marcadorAmbulancia.getPosition() != latLngAmbu){
+                Log.e("Marcador","nuevo"); // nueva posicion
+                    Toast.makeText(MapsActivity.this,"Posicion cambiada",Toast.LENGTH_SHORT).show();
+                    Polyline linea = mMap.addPolyline(new PolylineOptions()
+                            .add(marcadorAmbulancia.getPosition(), latLngAmbu).width(8).color(R.color.colorPrimary)
+                    );
+                    marcadorAmbulancia.setPosition(latLngAmbu);
+                }
+
                 /*marcadorAmbulancia.remove();
 
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
@@ -160,7 +170,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
               //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
               //  Toast.makeText(MapsActivity.this,"latitud: "+marcadorAmbulancia.getPosition(),Toast.LENGTH_SHORT).show();
-            }else {
+            }else if(marcadorAmbulancia!=null){
+                Toast.makeText(MapsActivity.this,"Posiciones iguales",Toast.LENGTH_SHORT).show();
+            }
+            else {
                 Log.e("Marcador","creado");
                 marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                         .position(latLngAmbu)

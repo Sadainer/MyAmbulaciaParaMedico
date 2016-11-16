@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
 
                 SharedPreferences.Editor e = registro.edit();
-                if(!output.equals("Error")){     //////////Si no hay errores////////
+                if(!(output.equals("ErrorA"))){     //////////Si no hay errores////////
                     /////Convertir Json a LoginDto
                     LoginDto loginExitoso = loginjson.fromJson(output, LoginDto.class);
                     //Asignar Id
@@ -168,6 +168,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Contraseña o Usuario no validos",Toast.LENGTH_SHORT).show();
+                    ContraseñaView.setText("");
+                    ContraseñaView.requestFocus();
                 }
 
             }

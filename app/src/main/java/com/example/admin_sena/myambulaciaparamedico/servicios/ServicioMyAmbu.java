@@ -56,6 +56,8 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     NotificationManager nm;
     Location myLocation;
 
+    double la;
+
     private GoogleApiClient client;
     double LatAmbu, LngAmbu;
 
@@ -76,6 +78,8 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
                     .addApi(LocationServices.API)
                     .build();
         }
+
+
 
     }
 
@@ -150,8 +154,20 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
         Log.e("Envio Posicion", gsson.toJson(ubicacion));
-        reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("latitud").setValue(location.getLatitude());
-        reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("longitud").setValue(location.getLongitude());
+        try {
+            if (ubicacion.getIdAmbulancia()!=null){
+
+                Log.e("IdAbulancia","no nula");
+                reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("latitud").setValue(location.getLatitude());
+                reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("longitud").setValue(location.getLongitude());
+            }else{
+
+            }
+
+        }catch (Exception e){
+            Log.e("Excepción: ",e.getMessage());
+
+        }
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
