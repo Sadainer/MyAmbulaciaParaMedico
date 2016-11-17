@@ -35,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,6 +93,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 stopService(new Intent(MapsActivity.this, ServiceSignalR.class));
                 Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
                 startActivity(volver_a_login);
+                finish();
 
                 break;
 
@@ -150,8 +152,57 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             idAmbulancia = arg1.getStringExtra("IdAmbulancia");
             latLngAmbu = new  LatLng(la,ln);
 
-            if (marcadorAmbulancia!=null){
+            if (reference.child("Ambulancias").child(idAmbulancia) != null){
+                reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.e("datachange: ","entro en snapshot");
+                        Double a = dataSnapshot.child("latitud").getValue(Double.class);
+                        Double b = dataSnapshot.child("longitud").getValue(Double.class);
+                        if (marcadorAmbulancia!=null && a != null && b!= null) {
+                            Polyline linea = mMap.addPolyline(new PolylineOptions()
+                                    .add(marcadorAmbulancia.getPosition(), new LatLng(a, b)).width(20).color(R.color.colorPrimary)
+                            );
+                            marcadorAmbulancia.setPosition(new LatLng(a, b));
 
+                        }
+
+                        Log.e("latitud",String.valueOf(a));
+                        Log.e("longitud",String.valueOf(b));
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+/*
+
+
+            reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("datachange: ","entro en snapshot");
+                    Double a = dataSnapshot.child("latitud").getValue(Double.class);
+                    Double b = dataSnapshot.child("latitud").getValue(Double.class);
+
+                    Log.e("latitud",String.valueOf(a));
+                    Log.e("longitud",String.valueOf(b));
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+*/
+
+            if (marcadorAmbulancia!=null){
+/*
                 if (marcadorAmbulancia.getPosition() != latLngAmbu){
                 Log.e("Marcador","nuevo"); // nueva posicion
                     Toast.makeText(MapsActivity.this,"Posicion cambiada",Toast.LENGTH_SHORT).show();
