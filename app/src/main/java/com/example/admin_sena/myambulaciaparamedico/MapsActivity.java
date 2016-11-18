@@ -135,7 +135,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             return;
         }
-        mMap.setMyLocationEnabled(true);
+       // mMap.setMyLocationEnabled(true);
 
 
     }
@@ -160,9 +160,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Double a = dataSnapshot.child("latitud").getValue(Double.class);
                         Double b = dataSnapshot.child("longitud").getValue(Double.class);
                         if (marcadorAmbulancia!=null && a != null && b!= null) {
-                            Polyline linea = mMap.addPolyline(new PolylineOptions()
+                            /*Polyline linea = mMap.addPolyline(new PolylineOptions()
                                     .add(marcadorAmbulancia.getPosition(), new LatLng(a, b)).width(20).color(R.color.colorPrimary)
-                            );
+                            );*/
                             marcadorAmbulancia.setPosition(new LatLng(a, b));
 
                         }
