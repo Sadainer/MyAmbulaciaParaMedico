@@ -92,8 +92,9 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        LocationManager locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+  /*      LocationManager locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
+
 
         Criteria req = new Criteria();
         req.setAccuracy(Criteria.ACCURACY_FINE);
@@ -133,7 +134,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         int RADIO_ACTUALIZACION = 5;
         int TIEMPO_ACTUALIZACION = 19000;
         locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
-
+*/
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -149,6 +150,8 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
 
         intent2 = new Intent();
         intent2.setAction(MY_ACTION);
+        LatAmbu = location.getLatitude();
+        LngAmbu = location.getLongitude();
         intent2.putExtra("LatAmbu", LatAmbu).putExtra("LngAmbu", LngAmbu).putExtra("IdAmbulancia",ubicacion.getIdAmbulancia());
         sendBroadcast(intent2);
         ubicacion.setLatitud(location.getLatitude());
@@ -198,10 +201,27 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             return;
         }
         myLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+
+        if (myLocation != null) {
+          //  System.out.println(posicionActual.getLatitude() + "   " + posicionActual.getLongitude());
+
+      //      LatAmbu = myLocation.getLatitude();
+        //    LngAmbu = myLocation.getLongitude();
+
+
+            SharedPreferences prefs = getSharedPreferences("preferences", MODE_PRIVATE);
+            ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
+            ubicacion.setLatitud(myLocation.getLatitude());
+            ubicacion.setLongitud(myLocation.getLongitude());
+            reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).setValue(ubicacion);
+
+           // Log.e("broadcast enviado", String.valueOf(posicionActual.getLatitude()));
+            EnviarUbicacion(myLocation);
+        }
+
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(20000);
         mLocationRequest.setFastestInterval(15000);

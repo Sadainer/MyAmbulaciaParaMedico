@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
+import com.example.admin_sena.myambulaciaparamedico.rutas.DirectionFinder;
+import com.example.admin_sena.myambulaciaparamedico.rutas.PasarUbicacion;
+import com.example.admin_sena.myambulaciaparamedico.rutas.Route;
 import com.example.admin_sena.myambulaciaparamedico.servicios.ServiceSignalR;
 import com.example.admin_sena.myambulaciaparamedico.servicios.ServicioMyAmbu;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,8 +45,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, PasarUbicacion {
 
     private GoogleMap mMap;
     Context cnt;
@@ -55,7 +62,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     DatabaseReference reference;
     UbicacionPacienteDto ubicacionPacienteDto;
     String idAmbulancia;
-    boolean flag =true;
+    private List<Polyline> polylinePaths = new ArrayList<>();
+
+
+    Toast toastClinica;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +92,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.opt_dibujar_ruta:
+                if (latLngAmbu != null && latLngPaciente != null){
+                    DirectionFinder rutasRequest = new DirectionFinder(this, latLngAmbu, latLngPaciente);
+                    rutasRequest.peticionRutas();
 
+                }
                 break;
             case R.id.opt_cerrar_sesion:
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
@@ -96,7 +110,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
 
                 break;
-
+            case R.id.opt_terminar_servicio:
+                mMap.clear();
+                startService(new Intent(MapsActivity.this, ServiceSignalR.class));
+                dibujarMarcador();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -140,97 +158,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    @Override
+    public void trazarRutas(List<Route> rutas) {
+        Log.e("Trazar rutas","trazando rutas");
+        for (Route route : rutas) {
+            PolylineOptions polylineOptions = new PolylineOptions().
+                    geodesic(true).
+                    color(Color.BLUE).
+                    width(10);
+
+            for (int i = 0; i < route.points.size(); i++)
+                polylineOptions.add(route.points.get(i));
+            polylinePaths.add(mMap.addPolyline(polylineOptions));
+        }
+    }
+
     private class MyReceiver extends BroadcastReceiver{
         //Recibo Mi posicion
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             //Se ha actualizado la posicion de la ambulancia
-
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
             idAmbulancia = arg1.getStringExtra("IdAmbulancia");
             latLngAmbu = new  LatLng(la,ln);
-
-            if (reference.child("Ambulancias").child(idAmbulancia) != null){
-                reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.e("datachange: ","entro en snapshot");
-                        Double a = dataSnapshot.child("latitud").getValue(Double.class);
-                        Double b = dataSnapshot.child("longitud").getValue(Double.class);
-                        if (marcadorAmbulancia!=null && a != null && b!= null) {
-                            /*Polyline linea = mMap.addPolyline(new PolylineOptions()
-                                    .add(marcadorAmbulancia.getPosition(), new LatLng(a, b)).width(20).color(R.color.colorPrimary)
-                            );*/
-                            marcadorAmbulancia.setPosition(new LatLng(a, b));
-
-                        }
-
-                        Log.e("latitud",String.valueOf(a));
-                        Log.e("longitud",String.valueOf(b));
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-/*
-
-
-            reference.child("Ambulancias").child(idAmbulancia).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.e("datachange: ","entro en snapshot");
-                    Double a = dataSnapshot.child("latitud").getValue(Double.class);
-                    Double b = dataSnapshot.child("latitud").getValue(Double.class);
-
-                    Log.e("latitud",String.valueOf(a));
-                    Log.e("longitud",String.valueOf(b));
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-*/
-
             if (marcadorAmbulancia!=null){
-/*
-                if (marcadorAmbulancia.getPosition() != latLngAmbu){
-                Log.e("Marcador","nuevo"); // nueva posicion
-                    Toast.makeText(MapsActivity.this,"Posicion cambiada",Toast.LENGTH_SHORT).show();
-                    Polyline linea = mMap.addPolyline(new PolylineOptions()
-                            .add(marcadorAmbulancia.getPosition(), latLngAmbu).width(8).color(R.color.colorPrimary)
-                    );
-                    marcadorAmbulancia.setPosition(latLngAmbu);
-                }
-
-                /*marcadorAmbulancia.remove();
-
-                marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
-                        .position(latLngAmbu)
-                        .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
-              */
-                //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
-              //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.5f));
-              //  Toast.makeText(MapsActivity.this,"latitud: "+marcadorAmbulancia.getPosition(),Toast.LENGTH_SHORT).show();
-            }else if(marcadorAmbulancia!=null){
-                Toast.makeText(MapsActivity.this,"Posiciones iguales",Toast.LENGTH_SHORT).show();
+                marcadorAmbulancia.setPosition(latLngAmbu);
             }
             else {
-                Log.e("Marcador","creado");
-                marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
-                        .position(latLngAmbu)
-                        .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
+                dibujarMarcador();
             }
         }
     }
@@ -304,6 +261,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void dibujarMarcador(){
+        marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
+                .position(latLngAmbu)
+                .title("MiPosicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.ambulance3)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
+    }
+
     private void buscarClinica(LatLng latLngPaciente) {
         Location location = new Location("");
         location.setLongitude(latLngPaciente.longitude);
@@ -323,8 +288,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.e("el menor es: ",String.valueOf(a.get(j)));
 
         clinicaAsignada = lista.listaClinicas.get(j);
+//        toastClinica.setText("Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion());
+  //      toastClinica.setDuration(Toast.LENGTH_SHORT);
+        //toastClinica.setGravity(Gravity.BOTTOM,0,0);
+
         Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
                 Toast.LENGTH_LONG).show();
+        //snackClinica.setText();
         clinicaAsignada.setIdPaciente(String.valueOf(ubicacionPacienteDto.getIdPaciente()));
         clinicaAsignada.setIdAmbulancia(idAmbulancia);
 
@@ -332,5 +302,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
 
 }

@@ -11,7 +11,8 @@
 
     Alternatively, follow the directions here:
     https://developers.google.com/maps/documentation/android/start#get-key
-
+    api de prueba
+AIzaSyDbCCm75pd-bS-UIuSxRADAmnyY62fyeNk
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->

@@ -35,4 +35,5 @@
     <!-- Menu en mapas -->
     <string name="st_cerrar_sesion">Cerrar Sesion</string>
     <string name="st_dibujar_ruta">Mostrar Ruta</string>
+    <string name="st_terminar_servicio">Terminar servicio</string>
 </resources>
