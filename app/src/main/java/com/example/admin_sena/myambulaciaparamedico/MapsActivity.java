@@ -95,7 +95,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (latLngAmbu != null && latLngPaciente != null){
                     DirectionFinder rutasRequest = new DirectionFinder(this, latLngAmbu, latLngPaciente);
                     rutasRequest.peticionRutas();
-
+                }else {
+                    Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.opt_cerrar_sesion:
@@ -111,9 +112,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 break;
             case R.id.opt_terminar_servicio:
-                mMap.clear();
-                startService(new Intent(MapsActivity.this, ServiceSignalR.class));
-                dibujarMarcador();
+                if (ubicacionPacienteDto!=null){
+                    mMap.clear();
+                    ubicacionPacienteDto = null;
+                    startService(new Intent(MapsActivity.this, ServiceSignalR.class));
+                    dibujarMarcador();
+                }else {
+                    Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
         }
         return super.onOptionsItemSelected(item);

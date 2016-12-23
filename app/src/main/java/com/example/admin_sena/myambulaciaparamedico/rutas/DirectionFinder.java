@@ -24,18 +24,22 @@ public class DirectionFinder {
     public PasarUbicacion pasar;
     public LatLng origen;
     public LatLng destino;
-    private final String API_KEY = "AIzaSyDbCCm75pd-bS-UIuSxRADAmnyY62fyeNk";
+    //private final String API_KEY = "AIzaSyDbCCm75pd-bS-UIuSxRADAmnyY62fyeNk";
+    private final String API_KEY = "AIzaSyCK9JS-olnr0GYa7IqxE3pQiHrAqYNdU_g";
     private final String URL_HTTP = "https://maps.googleapis.com/maps/api/directions/json?origin=";
-
+    String myurl = "https://maps.googleapis.com/maps/api/directions/json?origin=10.451655,-73.246534&destination=10.464147,-73.243916&key=AIzaSyCK9JS-olnr0GYa7IqxE3pQiHrAqYNdU_g"
+            ;
+//"https://maps.googleapis.com/maps/api/directions/json?origin=10.451655,-73.246534&destination=10.464147,-73.243916&key=AIzaSyDbCCm75pd-bS-UIuSxRADAmnyY62fyeNk"
     public DirectionFinder(PasarUbicacion pasar, LatLng origen, LatLng destino) {
         this.pasar = pasar;
         this.origen = origen;
         this.destino = destino;
-
-
+        Log.e("finder","creado");
     }
     public void peticionRutas(){
         String link = crearUrl();
+        //String myurl = "https://maps.googleapis.com/maps/api/directions/json?origin=10.451655,-73.246534&destination=10.464147,-73.243916&key=AIzaSyDbCCm75pd-bS-UIuSxRADAmnyY62fyeNk";
+        Log.e("peticion","rutas");
         new DownloadRawData().execute(link);
     }
 
@@ -48,15 +52,15 @@ public class DirectionFinder {
     private class DownloadRawData extends AsyncTask<String, Void, String> {
 
 
-
-
-
         @Override
         protected String doInBackground(String... params) {
+            StringBuffer buffer = new StringBuffer();
             try {
+                Log.e("entro al try","ok");
                 URL url = new URL(params[0]);
                 InputStream is = url.openConnection().getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                Log.e("se abrio la ","conexion");
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
                 String line;
@@ -64,19 +68,21 @@ public class DirectionFinder {
                     buffer.append(line + "\n");
                 }
                 Log.e("json: ",buffer.toString());
-                return buffer.toString();
+
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return buffer.toString();
         }
 
         @Override
         protected void onPostExecute(String res) {
             try {
                 parseJSon(res);
+                Log.e("ir a parse","JSON");
             } catch (JSONException e) {
+                Log.e("Exception","con JSON");
                 e.printStackTrace();
             }
         }
