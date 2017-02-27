@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -154,7 +155,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.e("Permisos","no granted");
-         //   return;
+
         }
        // mMap.setMyLocationEnabled(true);
 
@@ -178,7 +179,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private class MyReceiver extends BroadcastReceiver{
         //Recibo Mi posicion
-
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             //Se ha actualizado la posicion de la ambulancia
@@ -199,6 +199,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
+
 
             String mensaje = arg1.getStringExtra("UbicacionPaciente");
             ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
@@ -230,6 +231,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.5f));
                 buscarClinica(latLngPaciente);
             }
+            MediaPlayer mp = MediaPlayer.create(MapsActivity.this, R.raw.ambulance);
+            mp.start();
             reference.child("Pedidos").child("Pedido"+ubicacionPacienteDto.getIdPaciente()).child("Cancelado").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {

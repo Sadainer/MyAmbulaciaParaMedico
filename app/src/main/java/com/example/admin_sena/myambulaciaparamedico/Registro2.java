@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 public class Registro2 extends AppCompatActivity {
 
     Gson Registrojson = new Gson();
-    private static String DIR_URL = "http://190.109.185.138:8013/api/paramedicos";
+    private static String DIR_URL = "http://myambulancia.azurewebsites.net/api/paramedicos";
     Context cnt;
     Button btnRegistro;
     EditText edtNuevaContraseña;

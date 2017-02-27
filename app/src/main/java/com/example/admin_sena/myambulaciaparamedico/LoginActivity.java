@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private ServiceSignalR mService;
     private boolean mBound = false;
     Context context;
-    private static String DIR_URL = "http://190.109.185.138:8013/api/loginparamedicos";
+    private static String DIR_URL = "http://myambulancia.azurewebsites.net/api/LoginParamedicos";
     Button login;
     Button Registrar;
     LoginDto loginDto;

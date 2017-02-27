@@ -60,7 +60,9 @@ public class ServiceSignalR extends Service {
 
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        String host = "http://190.109.185.138:8013/";
+        //String host = "http://190.109.185.138:8013/";
+        String host = "http://myambulancia.azurewebsites.net/";
+
         connection = new HubConnection(host);
         proxy = connection.createHubProxy("hubAlarma");
 

@@ -44,7 +44,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     Context cnt;
 
     //Variable para guardar al mejor proveedor para obtener la ubicacion
-    String MejorProveedor = null;
+    //String MejorProveedor = null;
     //My_Action
     public final static String MY_ACTION = "MY_ACTION";
     FirebaseDatabase database;
@@ -206,11 +206,6 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         myLocation = LocationServices.FusedLocationApi.getLastLocation(client);
 
         if (myLocation != null) {
-          //  System.out.println(posicionActual.getLatitude() + "   " + posicionActual.getLongitude());
-
-      //      LatAmbu = myLocation.getLatitude();
-        //    LngAmbu = myLocation.getLongitude();
-
 
             SharedPreferences prefs = getSharedPreferences("preferences", MODE_PRIVATE);
             ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
