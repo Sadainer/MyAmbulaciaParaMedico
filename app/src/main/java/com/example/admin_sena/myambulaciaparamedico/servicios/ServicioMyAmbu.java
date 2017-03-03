@@ -170,7 +170,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         }catch (Exception e){
             Log.e("Excepción: ",e.getMessage());
 
-        }
+        }/*
         PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
             @Override
             public void processFinish(String output) {
@@ -189,7 +189,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         } catch (ExecutionException e) {
             System.out.println("Error e");
             e.printStackTrace();
-        }
+        }*/
 
     }
 

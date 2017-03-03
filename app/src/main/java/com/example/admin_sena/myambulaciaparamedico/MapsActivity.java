@@ -2,6 +2,7 @@ package com.example.admin_sena.myambulaciaparamedico;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -57,8 +59,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng latLngPaciente;
     private Clinica clinicaAsignada;
     FirebaseDatabase database;
-    DatabaseReference reference;
+    DatabaseReference reference, pedido;
     UbicacionPacienteDto ubicacionPacienteDto;
+    AlertDialog dialogAceptarEm;
     String idAmbulancia;
     private List<Polyline> polylinePaths = new ArrayList<>();
 
@@ -70,13 +73,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        startService(new Intent(MapsActivity.this, ServiceSignalR.class));
+        //startService(new Intent(MapsActivity.this, ServiceSignalR.class));
         startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
         cnt = this;
         mapFragment.getMapAsync(this);
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        builder
+                .setIcon(R.drawable.ic_launcher2)
+                .setTitle("Aceptar Emergencia?")
+                .setNegativeButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        pedido.setValue(true);
+                    }
+                })
+                .setPositiveButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                    }
+        });
+        dialogAceptarEm = builder.create();
     }
 
     @Override
@@ -102,7 +121,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 editor.putBoolean("ImLoggedIn", false);
                 editor.apply();
                 stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
-                stopService(new Intent(MapsActivity.this, ServiceSignalR.class));
+                //stopService(new Intent(MapsActivity.this, ServiceSignalR.class));
                 Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
                 startActivity(volver_a_login);
                 finish();
@@ -132,12 +151,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServicioMyAmbu.MY_ACTION);
         registerReceiver(myReceiver, intentFilter);
-
+/*
         receiverSignalR = new MyReceiverSignalR();
         IntentFilter intentFilter2 = new IntentFilter();
         intentFilter2.addAction(ServiceSignalR.MY_ACTION2);
         registerReceiver(receiverSignalR, intentFilter2);
-
+*/
         super.onStart();
     }
 
@@ -145,7 +164,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onStop() {
         // TODO Auto-generated method stub
         unregisterReceiver(myReceiver);
-        unregisterReceiver(receiverSignalR);
+        //unregisterReceiver(receiverSignalR);
         finish();
         super.onStop();
     }
@@ -184,7 +203,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //Se ha actualizado la posicion de la ambulancia
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
-            idAmbulancia = arg1.getStringExtra("IdAmbulancia");
+            if (idAmbulancia == null){
+                idAmbulancia = arg1.getStringExtra("IdAmbulancia");
+                Log.e("idAmbulancia", idAmbulancia);
+                escucharporPedidos(idAmbulancia);
+            }
+
             latLngAmbu = new  LatLng(la,ln);
             if (marcadorAmbulancia!=null){
                 marcadorAmbulancia.setPosition(latLngAmbu);
@@ -193,6 +217,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dibujarMarcador();
             }
         }
+    }
+
+    private void escucharporPedidos(String idAmbulancia) {
+        reference.child("Ambulancias").child(idAmbulancia).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("Key ", dataSnapshot.getKey());
+                if (dataSnapshot.getKey().equals("Pedido")){
+                    pedido = dataSnapshot.child("aceptado").getRef();
+                    dialogAceptarEm.show();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private class MyReceiverSignalR extends BroadcastReceiver{

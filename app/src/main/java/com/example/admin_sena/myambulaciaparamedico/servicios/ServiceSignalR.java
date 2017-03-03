@@ -65,6 +65,7 @@ public class ServiceSignalR extends Service {
 
         connection = new HubConnection(host);
         proxy = connection.createHubProxy("hubAlarma");
+        System.err.println("proxy conectado");
 
         // subscribe to received - equal to `connection.received(function (data)` from javascript
         connection.received(new MessageReceivedHandler() {

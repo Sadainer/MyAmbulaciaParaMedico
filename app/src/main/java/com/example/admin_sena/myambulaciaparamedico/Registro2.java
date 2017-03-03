@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.util.concurrent.ExecutionException;
@@ -30,11 +32,15 @@ public class Registro2 extends AppCompatActivity {
     EditText edtCorreo;
     EditText edtConfirmarContraseña;
     EditText edtConfirmarCorreo;
+    FirebaseDatabase database;
+    DatabaseReference registros;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro2);
+        database = FirebaseDatabase.getInstance();
+        registros = database.getReference("RegistrosAmbulancias");
 
         cnt=this;
         btnRegistro = (Button)findViewById(R.id.btnRegistrarse);
@@ -61,8 +67,8 @@ public class Registro2 extends AppCompatActivity {
                     registro.setPassword(edtNuevaContraseña.getText().toString());
 
                     /////Enviar registro al servidor aqui
-                    EnviarRegistro(registro);
-
+                    //EnviarRegistro(registro);
+                    enviarRegistroFirebase(registro);
                     Log.e("Registto",Registrojson.toJson(registro));
                 }else{
                     if (!edtCorreo.getText().toString().equals(edtConfirmarCorreo.getText().toString())){
@@ -77,7 +83,19 @@ public class Registro2 extends AppCompatActivity {
         });
     }
 
-public void EnviarRegistro (RegistroDto registroDto){
+    private void enviarRegistroFirebase(RegistroDto registro) {
+        registros.child(registro.getCedula()).setValue(registro);
+        DatabaseReference ultimoregistro = registros.child(registro.getCedula());
+        ultimoregistro.child("NumServicios").setValue(0);
+        Toast.makeText(cnt,"Ambulancia registrada exitosamente.",Toast.LENGTH_SHORT).show();
+        finish();
+        //Volver al login
+        Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
+        startActivity(volver_a_login);
+
+    }
+
+    public void EnviarRegistro (RegistroDto registroDto){
 
     Log.e("Prueba", Registrojson.toJson(registroDto));
     PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), cnt, new PostAsyncrona.AsyncResponse() {
@@ -85,7 +103,7 @@ public void EnviarRegistro (RegistroDto registroDto){
         public void processFinish(String output) {
             Log.e("output", output);
             if (!output.equals("Error")) {
-                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+         /*       SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
                 editor.putString("Nombres", paramedico.getNombres());
@@ -93,7 +111,7 @@ public void EnviarRegistro (RegistroDto registroDto){
                 editor.putString("Cedula", paramedico.getCedula());
                 editor.putString("Correo", paramedico.getCorreo());
                 editor.putString("Contraseña", paramedico.getPassword());
-                editor.commit();
+                editor.commit();*/
                 finish();
                 //Volver al login
                 Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
