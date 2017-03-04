@@ -11,6 +11,11 @@ public class Clinica {
     private Location ubicacion;
     private String IdAmbulancia;
     private String IdPaciente;
+
+    public Clinica() {
+
+    }
+
     public Clinica(String nombre, String direccion, LatLng ubicacion) {
         this.nombre = nombre;
         this.direccion = direccion;

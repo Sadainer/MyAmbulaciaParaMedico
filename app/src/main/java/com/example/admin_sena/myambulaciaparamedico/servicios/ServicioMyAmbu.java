@@ -43,20 +43,15 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
 
     Context cnt;
 
-    //Variable para guardar al mejor proveedor para obtener la ubicacion
-    //String MejorProveedor = null;
     //My_Action
     public final static String MY_ACTION = "MY_ACTION";
     FirebaseDatabase database;
-    DatabaseReference reference;
-    DatabaseReference miAmbulancia;
+    DatabaseReference reference, miAmbulancia;
     UbicacionDto ubicacion = new UbicacionDto();
     final Gson gsson = new Gson();
     Intent intent2;
     NotificationManager nm;
     Location myLocation;
-
-    double la;
 
     private GoogleApiClient client;
     double LatAmbu, LngAmbu;
@@ -79,10 +74,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
                     .build();
         }
 
-
-
     }
-
     @Override
     public void onStart(Intent intent, int startId) {
         client.connect();
@@ -93,52 +85,9 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-  /*      LocationManager locationMangaer = (LocationManager) getSystemService(cnt.LOCATION_SERVICE);
-
-
-        Criteria req = new Criteria();
-        req.setAccuracy(Criteria.ACCURACY_FINE);
-
-
-        //Mejor proveedor por criterio
-        MejorProveedor = locationMangaer.getBestProvider(req, false);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            }
-        }
-        //Obtenemos la ultima ubicacion registrada en el equipo
-        Location posicionActual = locationMangaer.getLastKnownLocation(MejorProveedor);
-
-        //Si la posicion es diferente de null creamos un marcados con el titulo Posicion inicial
-        if (posicionActual != null) {
-            System.out.println(posicionActual.getLatitude() + "   " + posicionActual.getLongitude());
-
-            LatAmbu = posicionActual.getLatitude();
-            LngAmbu = posicionActual.getLongitude();
-
-
-            SharedPreferences prefs = getSharedPreferences("preferences", MODE_PRIVATE);
-            ubicacion.setIdAmbulancia(prefs.getString("IdAmbulancia", "1"));
-            ubicacion.setLatitud(LatAmbu);
-            ubicacion.setLongitud(LngAmbu);
-            reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).setValue(ubicacion);
-
-            Log.e("broadcast enviado", String.valueOf(posicionActual.getLatitude()));
-            EnviarUbicacion(posicionActual);
-        }
-
-        LocationListener locationListener = new MiUbicacion();
-
-        int RADIO_ACTUALIZACION = 5;
-        int TIEMPO_ACTUALIZACION = 19000;
-        locationMangaer.requestLocationUpdates(MejorProveedor, TIEMPO_ACTUALIZACION, RADIO_ACTUALIZACION, locationListener);
-*/
         return super.onStartCommand(intent, flags, startId);
 
     }
-
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -147,7 +96,6 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
 
     //Metodo para enviar Ubicacion al servidor
     private void EnviarUbicacion(Location location) {
-
         intent2 = new Intent();
         intent2.setAction(MY_ACTION);
         LatAmbu = location.getLatitude();
@@ -170,26 +118,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         }catch (Exception e){
             Log.e("Excepción: ",e.getMessage());
 
-        }/*
-        PostAsyncrona EnviarUbicacion = new PostAsyncrona(gsson.toJson(ubicacion), cnt, new PostAsyncrona.AsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                Log.e("Posicion ", " enviada al servidor");
-            }
-        });
-
-        System.out.println(gsson.toJson(ubicacion));
-        try {
-            String DIR_URL = "http://190.109.185.138:8013/api/Ubicacionambulancias";
-            EnviarUbicacion.execute(DIR_URL).get();
-            System.out.println("Ok");
-        } catch (InterruptedException e) {
-            System.out.println("Error i");
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            System.out.println("Error e");
-            e.printStackTrace();
-        }*/
+        }
 
     }
 
@@ -233,66 +162,6 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
 
     @Override
     public void onConnectionSuspended(int i) {
-
-    }
-
-
-    //Clase que permite escuchar las ubicaciones, cada vez que cambia la ubicacion se activa el metodo onLocationChanged y creamos un
-    //nuevo marcador con la ubicacion y como titulo la hora del registro de la ubicacion
-    private class MiUbicacion implements LocationListener
-    {
-        int notificationID = 1;
-        @Override
-        public void onLocationChanged(Location location) {
-           // Log.e("Posicion "," cambiada");
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-            nm.cancel(notificationID);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-            displayNotification();
-
-        }
-
-        // Notifica sobre GPS desactivado y envia para activacion
-        protected void displayNotification(){
-
-            Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-            myIntent.putExtra("notificationID", notificationID);
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(cnt, 0, myIntent, 0);
-
-
-            CharSequence ticker ="Activar GPS";
-            CharSequence contentTitle = "MyAmbu";
-            CharSequence contentText = "GPS Desactivado";
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Notification noti = new NotificationCompat.Builder(cnt)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setTicker(ticker)
-                    .setContentTitle(contentTitle)
-                    .setContentText(contentText)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .addAction(R.drawable.ic_setting_dark, ticker, pendingIntent)
-                    .setVibrate(new long[] {100, 250, 100, 500})
-                    .setSound(alarmSound)
-                    .build();
-            nm.notify(notificationID, noti);
-        }
-
     }
 
     @Override

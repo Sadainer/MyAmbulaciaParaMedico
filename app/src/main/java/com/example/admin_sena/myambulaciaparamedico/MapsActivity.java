@@ -42,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,16 +54,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Context cnt;
     Marker marcadorAmbulancia;
     MyReceiver myReceiver;
-    MyReceiverSignalR receiverSignalR;
     // private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
     private LatLng latLngAmbu;
     private LatLng latLngPaciente;
     private Clinica clinicaAsignada;
     FirebaseDatabase database;
-    DatabaseReference reference, pedido;
+    DatabaseReference reference, pedido, ambulanciaFirebase, clinicasRef;
     UbicacionPacienteDto ubicacionPacienteDto;
     AlertDialog dialogAceptarEm;
-    String idAmbulancia;
+    String idAmbulancia, idPaciente;
     private List<Polyline> polylinePaths = new ArrayList<>();
 
 
@@ -87,15 +87,70 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         pedido.setValue(true);
+                        dialogInterface.dismiss();
+                        // acepto la emergencia
+                        handleEmergencia();
                     }
                 })
                 .setPositiveButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        //no acepto emergencia
                     }
         });
+        clinicasRef = reference.child("Clinicas");
+        clinicasRef.child("hospital").setValue(true);
         dialogAceptarEm = builder.create();
+    }
+
+    private void handleEmergencia() {
+        ambulanciaFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+              double latPedido  = (double)dataSnapshot.child("Pedido").child("latitud").getValue();
+              double longPedido = (double)dataSnapshot.child("Pedido").child("longitud").getValue();
+              String direction = (String)dataSnapshot.child("Pedido").child("direccion").getValue();
+              String numPacientes =  Long.toString((Long) dataSnapshot.child("Pedido").child("numeroPacientes").getValue());
+              idPaciente = (String)dataSnapshot.child("Pedido").child("idPaciente").getValue();
+                latLngPaciente = new LatLng(latPedido, longPedido);
+              Location locationPedido = new Location("");
+                locationPedido.setLongitude(latPedido);
+                locationPedido.setLongitude(longPedido);
+                drawMarkerPedido(direction, numPacientes);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void drawMarkerPedido(final String direction, final String numPacientes) {
+
+        Marker marcador =  mMap.addMarker(new MarkerOptions()
+                .position(latLngPaciente)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v = getLayoutInflater().inflate(R.layout.info_box, null);
+                TextView tvInfo = (TextView)v.findViewById(R.id.tvInfo);
+                tvInfo.setText("Direccion: "+direction+"\n"+"Pacientes: "+
+                        numPacientes);
+                return v;
+            }
+        });
+        marcador.setTitle(direction);
+        marcador.showInfoWindow();
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.5f));
+       // buscarClinica(latLngPaciente);
     }
 
     @Override
@@ -178,7 +233,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
        // mMap.setMyLocationEnabled(true);
 
-
     }
 
     @Override
@@ -205,7 +259,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             double ln = arg1.getDoubleExtra("LngAmbu",0);
             if (idAmbulancia == null){
                 idAmbulancia = arg1.getStringExtra("IdAmbulancia");
-                Log.e("idAmbulancia", idAmbulancia);
                 escucharporPedidos(idAmbulancia);
             }
 
@@ -220,6 +273,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void escucharporPedidos(String idAmbulancia) {
+        ambulanciaFirebase = reference.child("Ambulancias").child(idAmbulancia).getRef();
         reference.child("Ambulancias").child(idAmbulancia).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -252,76 +306,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private class MyReceiverSignalR extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context arg0, Intent arg1) {
-
-
-            String mensaje = arg1.getStringExtra("UbicacionPaciente");
-            ubicacionPacienteDto= (UbicacionPacienteDto)arg1.getExtras().getSerializable("dto");
-
-            if (ubicacionPacienteDto != null) {
-                Log.e("Direccion Paciente",ubicacionPacienteDto.getDireccion());
-                latLngPaciente = new LatLng(ubicacionPacienteDto.getLatitud(),ubicacionPacienteDto.getLongitud());
-                Marker marcador =  mMap.addMarker(new MarkerOptions()
-                        .position(latLngPaciente)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
-                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                    @Override
-                    public View getInfoWindow(Marker marker) {
-                        return null;
-                    }
-
-                    @Override
-                    public View getInfoContents(Marker marker) {
-                        View v = getLayoutInflater().inflate(R.layout.info_box, null);
-                        TextView tvInfo = (TextView)v.findViewById(R.id.tvInfo);
-                        tvInfo.setText("Direccion: "+ubicacionPacienteDto.getDireccion()+"\n"+"Pacientes: "+
-                                String.valueOf(ubicacionPacienteDto.getNumeroPacientes()));
-                        return v;
-                    }
-                });
-                marcador.setTitle(ubicacionPacienteDto.getDireccion());
-                marcador.showInfoWindow();
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.5f));
-                buscarClinica(latLngPaciente);
-            }
-            MediaPlayer mp = MediaPlayer.create(MapsActivity.this, R.raw.ambulance);
-            mp.start();
-            reference.child("Pedidos").child("Pedido"+ubicacionPacienteDto.getIdPaciente()).child("Cancelado").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Toast.makeText(MapsActivity.this,"PEDIDO CANCELADOOOOO",Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            if (mensaje!=null){
-                Log.e("Mensaje recibido: ",mensaje);
-            }
-
-        }
-    }
 
     private void dibujarMarcador(){
         marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
@@ -330,7 +314,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
     }
-
+/*
     private void buscarClinica(LatLng latLngPaciente) {
         Location location = new Location("");
         location.setLongitude(latLngPaciente.longitude);
@@ -356,14 +340,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
                 Toast.LENGTH_LONG).show();
-        //snackClinica.setText();
-        clinicaAsignada.setIdPaciente(String.valueOf(ubicacionPacienteDto.getIdPaciente()));
+
+        clinicaAsignada.setIdPaciente(idPaciente);
         clinicaAsignada.setIdAmbulancia(idAmbulancia);
 
-        reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
-
+        //reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
+        clinicasRef.child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
 
     }
-
+*/
 
 }
