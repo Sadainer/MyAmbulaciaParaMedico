@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class Registro2 extends AppCompatActivity {
@@ -67,8 +68,7 @@ public class Registro2 extends AppCompatActivity {
                     registro.setPassword(edtNuevaContraseña.getText().toString());
 
                     /////Enviar registro al servidor aqui
-                    //EnviarRegistro(registro);
-                    enviarRegistroFirebase(registro);
+                    EnviarRegistro(registro);
                     Log.e("Registto",Registrojson.toJson(registro));
                 }else{
                     if (!edtCorreo.getText().toString().equals(edtConfirmarCorreo.getText().toString())){
@@ -83,40 +83,29 @@ public class Registro2 extends AppCompatActivity {
         });
     }
 
-    private void enviarRegistroFirebase(RegistroDto registro) {
-        registros.child(registro.getCedula()).setValue(registro);
-        DatabaseReference ultimoregistro = registros.child(registro.getCedula());
-        ultimoregistro.child("NumServicios").setValue(0);
-        Toast.makeText(cnt,"Ambulancia registrada exitosamente.",Toast.LENGTH_SHORT).show();
-        finish();
-        //Volver al login
-        Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
-        startActivity(volver_a_login);
+    public void EnviarRegistro (final RegistroDto registroDto){
 
-    }
-
-    public void EnviarRegistro (RegistroDto registroDto){
-
-    Log.e("Prueba", Registrojson.toJson(registroDto));
     PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), cnt, new PostAsyncrona.AsyncResponse() {
         @Override
         public void processFinish(String output) {
             Log.e("output", output);
-            if (!output.equals("Error")) {
-         /*       SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                RegistroDto paramedico = Registrojson.fromJson(output, RegistroDto.class);
-                editor.putString("Nombres", paramedico.getNombres());
-                editor.putString("Apellidos", paramedico.getApellidos());
-                editor.putString("Cedula", paramedico.getCedula());
-                editor.putString("Correo", paramedico.getCorreo());
-                editor.putString("Contraseña", paramedico.getPassword());
-                editor.commit();*/
+            if (output.equals("ErrorA")){
+                Toast.makeText(cnt,"La Ambulancia ya existe.",Toast.LENGTH_SHORT).show();
+            }else if(output.equals("\"Paramedico Guardado\"")){
+
+
+                registros.child(registroDto.getCedula()).setValue(registroDto);
+                DatabaseReference ultimoregistro = registros.child(registroDto.getCedula());
+                ultimoregistro.child("NumServicios").setValue(0);
+
+                Toast.makeText(cnt,"Ambulancia registrada exitosamente.",Toast.LENGTH_SHORT).show();
                 finish();
                 //Volver al login
                 Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
                 startActivity(volver_a_login);
-
+            }
+            else {
+                Toast.makeText(cnt,"No se pudo registrar la ambulancia, por favor intente mas tarde.",Toast.LENGTH_SHORT).show();
             }
         }
     });

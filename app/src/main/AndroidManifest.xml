@@ -53,11 +53,6 @@
             android:label="@string/title_activity_login">
         </activity>
 
-        <service
-            android:name=".servicios.ServiceSignalR"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
     </application>
 
 </manifest>

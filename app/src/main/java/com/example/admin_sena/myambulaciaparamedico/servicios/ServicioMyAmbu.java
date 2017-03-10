@@ -108,7 +108,7 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         try {
             if (ubicacion.getIdAmbulancia()!=null){
 
-                Log.e("IdAbulancia","no nula");
+
                 reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("latitud").setValue(location.getLatitude());
                 reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("longitud").setValue(location.getLongitude());
             }else{
@@ -133,6 +133,13 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
             return;
         }
         myLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+        while (myLocation == null){
+            try {
+                myLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+            }catch (Exception e){
+                Log.e("Servicio my ambu","mylocation es nula");
+            }
+        }
 
         if (myLocation != null) {
 

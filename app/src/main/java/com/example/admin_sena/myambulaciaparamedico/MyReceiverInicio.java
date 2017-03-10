@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.admin_sena.myambulaciaparamedico.servicios.ServiceSignalR;
 import com.example.admin_sena.myambulaciaparamedico.servicios.ServicioMyAmbu;
 
 
@@ -21,7 +20,6 @@ public class MyReceiverInicio extends BroadcastReceiver {
         Log.e("Llego el intent","OnReceive");
 //        throw new UnsupportedOperationException("Not yet implemented");
         context.startService(new Intent(context, ServicioMyAmbu.class));
-     //   context.startService(new Intent(context, ServiceSignalR.class));
 
     }
 }

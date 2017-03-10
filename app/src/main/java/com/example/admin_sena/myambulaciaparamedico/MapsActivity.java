@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,6 @@ import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.myambulaciaparamedico.rutas.DirectionFinder;
 import com.example.admin_sena.myambulaciaparamedico.rutas.PasarUbicacion;
 import com.example.admin_sena.myambulaciaparamedico.rutas.Route;
-import com.example.admin_sena.myambulaciaparamedico.servicios.ServiceSignalR;
 import com.example.admin_sena.myambulaciaparamedico.servicios.ServicioMyAmbu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -50,18 +50,17 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, PasarUbicacion {
 
+    int cont=0;
     private GoogleMap mMap;
     Context cnt;
     Marker marcadorAmbulancia;
     MyReceiver myReceiver;
-    // private String url_Directions_API ="http://maps.googleapis.com/maps/api/directions/json?";
-    private LatLng latLngAmbu;
-    private LatLng latLngPaciente;
-    private Clinica clinicaAsignada;
+    private LatLng latLngAmbu, latLngPaciente;
     FirebaseDatabase database;
     DatabaseReference reference, pedido, ambulanciaFirebase, clinicasRef;
     UbicacionPacienteDto ubicacionPacienteDto;
     AlertDialog dialogAceptarEm;
+
     String idAmbulancia, idPaciente;
     private List<Polyline> polylinePaths = new ArrayList<>();
 
@@ -73,7 +72,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        //startService(new Intent(MapsActivity.this, ServiceSignalR.class));
+
         startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
         cnt = this;
         mapFragment.getMapAsync(this);
@@ -83,9 +82,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder
                 .setIcon(R.drawable.ic_launcher2)
                 .setTitle("Aceptar Emergencia?")
+                .setCancelable(false)
                 .setNegativeButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
                         pedido.setValue(true);
                         dialogInterface.dismiss();
                         // acepto la emergencia
@@ -98,8 +99,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //no acepto emergencia
                     }
         });
-        clinicasRef = reference.child("Clinicas");
-        clinicasRef.child("hospital").setValue(true);
+        clinicasRef = database.getReference("Clinicas");
         dialogAceptarEm = builder.create();
     }
 
@@ -150,7 +150,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         marcador.showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngPaciente));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPaciente, 14.5f));
-       // buscarClinica(latLngPaciente);
+        buscarClinica(latLngPaciente);
     }
 
     @Override
@@ -176,7 +176,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 editor.putBoolean("ImLoggedIn", false);
                 editor.apply();
                 stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
-                //stopService(new Intent(MapsActivity.this, ServiceSignalR.class));
                 Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
                 startActivity(volver_a_login);
                 finish();
@@ -186,7 +185,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (ubicacionPacienteDto!=null){
                     mMap.clear();
                     ubicacionPacienteDto = null;
-                    startService(new Intent(MapsActivity.this, ServiceSignalR.class));
                     dibujarMarcador();
                 }else {
                     Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
@@ -206,12 +204,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServicioMyAmbu.MY_ACTION);
         registerReceiver(myReceiver, intentFilter);
-/*
-        receiverSignalR = new MyReceiverSignalR();
-        IntentFilter intentFilter2 = new IntentFilter();
-        intentFilter2.addAction(ServiceSignalR.MY_ACTION2);
-        registerReceiver(receiverSignalR, intentFilter2);
-*/
         super.onStart();
     }
 
@@ -277,10 +269,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         reference.child("Ambulancias").child(idAmbulancia).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                cont++;
+                Log.e("Contador ", String.valueOf(cont));
                 Log.e("Key ", dataSnapshot.getKey());
                 if (dataSnapshot.getKey().equals("Pedido")){
+                    if (MapsActivity.this.isFinishing()){
+                        Log.e("Alert ","Activity is finishing");
+                    }
                     pedido = dataSnapshot.child("aceptado").getRef();
-                    dialogAceptarEm.show();
+                    try {
+                        dialogAceptarEm.show();
+                    }catch (WindowManager.BadTokenException e){
+                        pedido.setValue(false);
+                    }
+
                 }
             }
 
@@ -314,7 +316,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAmbu));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngAmbu, 14.0f));
     }
-/*
+
     private void buscarClinica(LatLng latLngPaciente) {
         Location location = new Location("");
         location.setLongitude(latLngPaciente.longitude);
@@ -333,7 +335,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int j = a.indexOf(Collections.min(a));
         Log.e("el menor es: ",String.valueOf(a.get(j)));
 
-        clinicaAsignada = lista.listaClinicas.get(j);
+        Clinica clinicaAsignada = lista.listaClinicas.get(j);
 //        toastClinica.setText("Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion());
   //      toastClinica.setDuration(Toast.LENGTH_SHORT);
         //toastClinica.setGravity(Gravity.BOTTOM,0,0);
@@ -348,6 +350,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         clinicasRef.child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
 
     }
-*/
+
 
 }
