@@ -190,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
 });
 
         try {
-            String DIR_URL = "http://myambulancia.azurewebsites.net/api/LoginParamedicos";
+            String DIR_URL = "http://myambulancia1.azurewebsites.net/api/LoginParamedicos";
             EnviarLogin.execute(DIR_URL).get();
             Log.e("ObjetoLoginDto", loginjson.toJson(login));
         } catch (InterruptedException e) {

@@ -23,16 +23,11 @@ import java.util.concurrent.ExecutionException;
 public class Registro2 extends AppCompatActivity {
 
     Gson Registrojson = new Gson();
-    private static String DIR_URL = "http://myambulancia.azurewebsites.net/api/paramedicos";
+    private static String DIR_URL = "http://myambulancia1.azurewebsites.net/api/paramedicos";
     Context cnt;
     Button btnRegistro;
-    EditText edtNuevaContraseña;
-    EditText edtNombres;
-    EditText edtApellidos;
-    EditText edtCedula;
-    EditText edtCorreo;
-    EditText edtConfirmarContraseña;
-    EditText edtConfirmarCorreo;
+    EditText edtNuevaContraseña, edtNombres, edtApellidos, edtCedula;
+    EditText edtCorreo, edtConfirmarContraseña, edtConfirmarCorreo;
     FirebaseDatabase database;
     DatabaseReference registros;
 

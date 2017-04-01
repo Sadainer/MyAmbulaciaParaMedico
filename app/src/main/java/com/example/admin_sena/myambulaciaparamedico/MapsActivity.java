@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -22,10 +21,10 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionPacienteDto;
 import com.example.admin_sena.myambulaciaparamedico.rutas.DirectionFinder;
 import com.example.admin_sena.myambulaciaparamedico.rutas.PasarUbicacion;
 import com.example.admin_sena.myambulaciaparamedico.rutas.Route;
+import com.example.admin_sena.myambulaciaparamedico.servicios.Notification;
 import com.example.admin_sena.myambulaciaparamedico.servicios.ServicioMyAmbu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,18 +51,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     int cont=0;
     private GoogleMap mMap;
-    Context cnt;
     Marker marcadorAmbulancia;
     MyReceiver myReceiver;
     private LatLng latLngAmbu, latLngPaciente;
     FirebaseDatabase database;
     DatabaseReference reference, pedido, ambulanciaFirebase, clinicasRef;
-    UbicacionPacienteDto ubicacionPacienteDto;
     AlertDialog dialogAceptarEm;
 
     String idAmbulancia, idPaciente;
     private List<Polyline> polylinePaths = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +70,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
 
         startService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
-        cnt = this;
         mapFragment.getMapAsync(this);
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
@@ -182,9 +177,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 break;
             case R.id.opt_terminar_servicio:
-                if (ubicacionPacienteDto!=null){
+                if (pedido!=null){
                     mMap.clear();
-                    ubicacionPacienteDto = null;
+                    pedido = null;
                     dibujarMarcador();
                 }else {
                     Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
@@ -278,6 +273,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                     pedido = dataSnapshot.child("aceptado").getRef();
                     try {
+                        Notification noti = new Notification(getApplicationContext());
+                        noti.sonar();
                         dialogAceptarEm.show();
                     }catch (WindowManager.BadTokenException e){
                         pedido.setValue(false);
@@ -308,7 +305,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-
     private void dibujarMarcador(){
         marcadorAmbulancia =    mMap.addMarker(new MarkerOptions()
                 .position(latLngAmbu)
@@ -336,18 +332,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.e("el menor es: ",String.valueOf(a.get(j)));
 
         Clinica clinicaAsignada = lista.listaClinicas.get(j);
-//        toastClinica.setText("Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion());
-  //      toastClinica.setDuration(Toast.LENGTH_SHORT);
-        //toastClinica.setGravity(Gravity.BOTTOM,0,0);
 
         Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
                 Toast.LENGTH_LONG).show();
 
         clinicaAsignada.setIdPaciente(idPaciente);
         clinicaAsignada.setIdAmbulancia(idAmbulancia);
-
-        //reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
-        clinicasRef.child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
+        reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
+        //clinicasRef.child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
 
     }
 
