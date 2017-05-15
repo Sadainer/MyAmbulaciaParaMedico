@@ -8,8 +8,11 @@ import java.util.ArrayList;
 public class ListaClinicas {
     ArrayList<Clinica> listaClinicas;
 
+    String[] nombres;
+
     public ListaClinicas() {
         this.listaClinicas = new ArrayList<>();
+
         llenarLista();
     }
 
@@ -25,9 +28,19 @@ public class ListaClinicas {
         listaClinicas.add(new Clinica("Clinica Erasmo"                      ,"Cr 19 4 C-72"     , new LatLng(10.48782,-73.2663187)));
       //  listaClinicas.add(new Clinica("Clinica de Fracturas","", new LatLng()));
         listaClinicas.add(new Clinica("Clinica Santa Isabel"                ,"Cra. 18d #22-33"  , new LatLng(10.461928, -73.250482)));
-        listaClinicas.add(new Clinica("Clinica Medicos Ltda"               ,""                 , new LatLng(10.4724154,-73.2496831)));
+        listaClinicas.add(new Clinica("Clinica Medicos Ltda"                ,""                 , new LatLng(10.4724154,-73.2496831)));
         listaClinicas.add(new Clinica("Clinica Santo Tomas"                 ,"Cra. 10 #131"     , new LatLng(10.476872, -73.249381)));
         listaClinicas.add(new Clinica("Clinica Arenas"                      ,"Cl. 16 #1827"     , new LatLng(10.469031, -73.255561)));
+        listaClinicas.add(new Clinica("Clinica Pediatrica"                  ,"Cra. 18d # 28-1 a 28-83"     , new LatLng(10.456463, -73.248194)));
 
+    }
+
+    public String[] getNombres(ArrayList<Clinica> listaClinicas2) {
+
+        nombres = new String[listaClinicas2.size()];
+        for (int i = 0; i<listaClinicas2.size(); i++){
+            nombres[i] = listaClinicas2.get(i).getNombre();
+        }
+        return nombres;
     }
 }

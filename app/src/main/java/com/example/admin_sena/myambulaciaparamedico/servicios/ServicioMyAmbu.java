@@ -171,6 +171,8 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     public void onConnectionSuspended(int i) {
     }
 
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();

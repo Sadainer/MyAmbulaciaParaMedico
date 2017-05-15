@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +19,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,9 +50,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, PasarUbicacion {
 
@@ -57,9 +69,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     FirebaseDatabase database;
     DatabaseReference reference, pedido, ambulanciaFirebase, clinicasRef;
     AlertDialog dialogAceptarEm;
-
+    Location mylocation = new Location("point a"), clinicaLocation = new Location("point b");
+    SimpleDateFormat sdf;
+    String currentDateandTime;
+    ListaClinicas lista;
+    int j;
+    Timer timer;
+    TimerTask timerTask;
     String idAmbulancia, idPaciente;
     private List<Polyline> polylinePaths = new ArrayList<>();
+
+    Clinica clinicaReal;
+    final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +106,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         pedido.setValue(true);
                         dialogInterface.dismiss();
                         // acepto la emergencia
+                        reference.child("Ambulancias").child(idAmbulancia).child("ocupado").setValue(true);
                         handleEmergencia();
                     }
                 })
@@ -96,6 +118,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         clinicasRef = database.getReference("Clinicas");
         dialogAceptarEm = builder.create();
+        sdf = new SimpleDateFormat("yyyy:MM:dd_HH:mm:ss", Locale.US);
     }
 
     private void handleEmergencia() {
@@ -181,6 +204,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mMap.clear();
                     pedido = null;
                     dibujarMarcador();
+                    currentDateandTime = sdf.format(new Date());
+                    reference.child("Pedidos").child("Pedido:" + idPaciente).child("tiempos").child("4").setValue(currentDateandTime);
+
                 }else {
                     Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
                 }
@@ -205,6 +231,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
+
+
         unregisterReceiver(myReceiver);
         //unregisterReceiver(receiverSignalR);
         finish();
@@ -244,6 +272,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //Se ha actualizado la posicion de la ambulancia
             double la = arg1.getDoubleExtra("LatAmbu",0);
             double ln = arg1.getDoubleExtra("LngAmbu",0);
+            mylocation.setLatitude(la);
+            mylocation.setLongitude(ln);
             if (idAmbulancia == null){
                 idAmbulancia = arg1.getStringExtra("IdAmbulancia");
                 escucharporPedidos(idAmbulancia);
@@ -314,11 +344,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void buscarClinica(LatLng latLngPaciente) {
+
         Location location = new Location("");
         location.setLongitude(latLngPaciente.longitude);
         location.setLatitude(latLngPaciente.latitude);
 
-        ListaClinicas lista = new ListaClinicas();
+        lista = new ListaClinicas();
         ArrayList<Float> a = new ArrayList<>();
 
         for (int i=0; i < lista.listaClinicas.size();i++ ){
@@ -328,20 +359,138 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             Log.e("distancia: ",String.valueOf(a.get(i)));
         }
-        int j = a.indexOf(Collections.min(a));
+        j = a.indexOf(Collections.min(a));
         Log.e("el menor es: ",String.valueOf(a.get(j)));
 
         Clinica clinicaAsignada = lista.listaClinicas.get(j);
 
-        Toast.makeText(MapsActivity.this, "Clinica asignada: " + clinicaAsignada.getNombre() + "\n" + "Direccion: " + clinicaAsignada.getDireccion(),
-                Toast.LENGTH_LONG).show();
-
+        mostrarDialogoClinicaAsignada(clinicaAsignada);
         clinicaAsignada.setIdPaciente(idPaciente);
         clinicaAsignada.setIdAmbulancia(idAmbulancia);
-        reference.child("Clinicas").child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
-        //clinicasRef.child(clinicaAsignada.getNombre()).setValue(clinicaAsignada);
+        reference.child("Pedidos").child("Pedido:" + idPaciente).child("clinicaAsignada").setValue(clinicaAsignada.getNombre());
+
+    }
+
+    private void mostrarDialogoClinicaAsignada(final Clinica clinicaAsignada) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setMessage("Su clinica asignada es " + clinicaAsignada.getNombre() + "\n" +
+                "Realizar traslado a este centro de atención.")
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_launcher2)
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        clinicaReal = clinicaAsignada;
+                        reference.child("Clinicas").child(clinicaReal.getNombre()).setValue(clinicaReal);
+                        reference.child("Clinicas").child(clinicaReal.getNombre()).child("idPedido").setValue(idPaciente);
+                        reference.child("Pedidos").child("Pedido:" + idPaciente).child("clinicaReal").setValue(clinicaReal.getNombre());
+                        clinicaLocation = clinicaAsignada.getUbicacion();
+                        startTimer();
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                        mostrarDialogSelectClinica(lista);
+
+                    }
+                });
+        builder.create();
+        builder.show();
+
+
+    }
+
+    private void mostrarDialogSelectClinica(final ListaClinicas lista) {
+
+        lista.listaClinicas.remove(j);
+        String[] nombres = lista.getNombres(lista.listaClinicas);
+
+        final ArrayAdapter<String> adp = new ArrayAdapter<>(MapsActivity.this,
+                android.R.layout.simple_spinner_item, nombres);
+
+        adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner sp = new Spinner(MapsActivity.this);
+        sp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        sp.setAdapter(adp);
+
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                clinicaReal = lista.listaClinicas.get(i);
+                Log.e("Clinica Real ", clinicaReal.getNombre());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+                clinicaReal = lista.listaClinicas.get(0);
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        builder.setTitle("Seleccionar CLinica");
+        builder.setView(sp);
+        builder.setCancelable(false)
+                .setNeutralButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                reference.child("Clinicas").child(clinicaReal.getNombre()).setValue(clinicaReal);
+                reference.child("Clinicas").child(clinicaReal.getNombre()).child("idPedido").setValue(idPaciente);
+                reference.child("Pedidos").child("Pedido:" + idPaciente).child("clinicaReal").setValue(clinicaReal.getNombre());
+
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
+
+
+    }
+
+    public void startTimer() {
+        //set a new Timer
+        timer = new Timer();
+        //inicializa la tarea de TimerTask
+        initializeTimerTask();
+        //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
+        timer.schedule(timerTask, 6000, 15000); //
+    }
+
+    private void initializeTimerTask() {
+
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        float distancia = mylocation.distanceTo(clinicaLocation);
+                        if (distancia<20.0){
+                            // llego a la clinica
+                            currentDateandTime = sdf.format(new Date());
+                            reference.child("Pedidos").child("Pedido:" + idPaciente).child("tiempos").child("4").setValue(currentDateandTime);
+                            Toast.makeText(MapsActivity.this, "TIempo 4 " + currentDateandTime, Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+
+            }
+        };
 
     }
 
 
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
+        super.onDestroy();
+    }
 }
