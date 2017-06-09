@@ -1,7 +1,6 @@
-package com.example.admin_sena.myambulaciaparamedico;
+package com.example.admin_sena.myambulaciaparamedico.actividades;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +22,8 @@ import android.widget.Toast;
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.CheckConnections;
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.LoginDto;
+import com.example.admin_sena.myambulaciaparamedico.MapsActivity;
+import com.example.admin_sena.myambulaciaparamedico.R;
 import com.google.gson.Gson;
 
 import java.util.concurrent.ExecutionException;
@@ -36,7 +37,6 @@ public class LoginActivity extends AppCompatActivity {
     private Gson loginjson = new Gson();
     public SharedPreferences registro;
 
-    Context context;
     Button login, Registrar;
     LoginDto loginDto;
     @Override
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void EnviarLogin(final LoginDto login){
-        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), context, new PostAsyncrona.AsyncResponse() {
+        PostAsyncrona EnviarLogin = new PostAsyncrona(loginjson.toJson(login), new PostAsyncrona.AsyncResponse() {
 
             @Override
             public void processFinish(String output) {
@@ -175,10 +175,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     e.putString("Usuario",loginDto.getCedula());
                     e.apply();
-                    finish();
 
                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
-
+                    finish();
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Contraseña o Usuario no validos",Toast.LENGTH_SHORT).show();
@@ -203,8 +202,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
+        super.onDestroy();
         finish();
-        super.onStop();
     }
 }

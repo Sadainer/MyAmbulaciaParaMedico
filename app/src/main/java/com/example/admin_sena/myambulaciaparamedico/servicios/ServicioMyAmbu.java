@@ -1,54 +1,37 @@
 package com.example.admin_sena.myambulaciaparamedico.servicios;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.UbicacionDto;
-import com.example.admin_sena.myambulaciaparamedico.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
-
-import java.util.concurrent.ExecutionException;
 
 
 public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     Context cnt;
 
-    //My_Action
     public final static String MY_ACTION = "MY_ACTION";
     FirebaseDatabase database;
     DatabaseReference reference, miAmbulancia;
     UbicacionDto ubicacion = new UbicacionDto();
-    final Gson gsson = new Gson();
     Intent intent2;
     NotificationManager nm;
     Location myLocation;
@@ -75,16 +58,12 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         }
 
     }
-    @Override
-    public void onStart(Intent intent, int startId) {
-        client.connect();
-        super.onStart(intent, startId);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        client.connect();
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -95,7 +74,8 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     }
 
     //Metodo para enviar Ubicacion al servidor
-    private void EnviarUbicacion(Location location) {
+    private void EnviarUbicacion(final Location location) {
+
         intent2 = new Intent();
         intent2.setAction(MY_ACTION);
         LatAmbu = location.getLatitude();
@@ -104,22 +84,23 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
         sendBroadcast(intent2);
         ubicacion.setLatitud(location.getLatitude());
         ubicacion.setLongitud(location.getLongitude());
-        Log.e("Envio Posicion", gsson.toJson(ubicacion));
+
         try {
-            if (ubicacion.getIdAmbulancia()!=null){
+            if (ubicacion.getIdAmbulancia() != null){
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("latitud").setValue(location.getLatitude());
-                reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("longitud").setValue(location.getLongitude());
-            }else{
-
+                        reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("latitud").setValue(location.getLatitude());
+                        reference.child("Ambulancias").child(ubicacion.getIdAmbulancia()).child("longitud").setValue(location.getLongitude());
+                    }
+                }
+                ).start();
             }
-
         }catch (Exception e){
             Log.e("Excepción: ",e.getMessage());
-
         }
-
     }
 
     @Override
@@ -171,13 +152,13 @@ public class ServicioMyAmbu extends Service implements GoogleApiClient.OnConnect
     public void onConnectionSuspended(int i) {
     }
 
-
-
     @Override
     public void onDestroy() {
+
         super.onDestroy();
         miAmbulancia = reference.child("Ambulancias").child(ubicacion.getIdAmbulancia());
         miAmbulancia.removeValue();
         client.disconnect();
+        database.goOffline();
     }
 }

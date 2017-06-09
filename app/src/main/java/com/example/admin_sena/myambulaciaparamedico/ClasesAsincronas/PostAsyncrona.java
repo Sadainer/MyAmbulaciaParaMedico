@@ -1,11 +1,8 @@
 package com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -16,7 +13,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     public interface AsyncResponse {
@@ -25,28 +21,24 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     public AsyncResponse delegate = null;
     private String mData = null;
-    URL url;
-    HttpURLConnection connection;
-    Context cnt;
+    private HttpURLConnection connection;
 
-    public PostAsyncrona(String data, Context context, AsyncResponse delegate) {
+    public PostAsyncrona(String data, AsyncResponse delegate) {
         mData = data;
-        cnt= context;
         this.delegate = delegate;
     }
     public void execute() {
         // TODO Auto-generated method stub
 
     }
-
     //Variable ruta se guarda la URI del servicio GET a consumir
 
     @Override
     protected String doInBackground(String... params) {
         String mensajeRespuesta = "";
         try {
-            url = new URL(params[0]);
-            connection = (HttpURLConnection)url.openConnection();
+            URL url = new URL(params[0]);
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
@@ -56,8 +48,8 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
             dStream.flush();
             dStream.close();
             //Read
-            StringBuilder sb = null;
-            BufferedReader br = null;
+            StringBuilder sb;
+            BufferedReader br;
             //here is the problem
             int responseCode=connection.getResponseCode();
             Log.e("respondeCode",String.valueOf(responseCode));
@@ -93,6 +85,7 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        connection.disconnect();
         delegate.processFinish(result);
     }
 }

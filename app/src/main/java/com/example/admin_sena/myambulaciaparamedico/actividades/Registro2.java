@@ -1,8 +1,7 @@
-package com.example.admin_sena.myambulaciaparamedico;
+package com.example.admin_sena.myambulaciaparamedico.actividades;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,11 +12,11 @@ import android.widget.Toast;
 
 import com.example.admin_sena.myambulaciaparamedico.ClasesAsincronas.PostAsyncrona;
 import com.example.admin_sena.myambulaciaparamedico.Dto.RegistroDto;
+import com.example.admin_sena.myambulaciaparamedico.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class Registro2 extends AppCompatActivity {
@@ -80,7 +79,7 @@ public class Registro2 extends AppCompatActivity {
 
     public void EnviarRegistro (final RegistroDto registroDto){
 
-    PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), cnt, new PostAsyncrona.AsyncResponse() {
+    PostAsyncrona Enviar = new PostAsyncrona(Registrojson.toJson(registroDto), new PostAsyncrona.AsyncResponse() {
         @Override
         public void processFinish(String output) {
             Log.e("output", output);
@@ -94,10 +93,11 @@ public class Registro2 extends AppCompatActivity {
                 ultimoregistro.child("NumServicios").setValue(0);
 
                 Toast.makeText(cnt,"Ambulancia registrada exitosamente.",Toast.LENGTH_SHORT).show();
-                finish();
+
                 //Volver al login
                 Intent volver_a_login = new Intent(Registro2.this, LoginActivity.class);
                 startActivity(volver_a_login);
+                finish();
             }
             else {
                 Toast.makeText(cnt,"No se pudo registrar la ambulancia, por favor intente mas tarde.",Toast.LENGTH_SHORT).show();

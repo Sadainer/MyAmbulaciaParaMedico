@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin_sena.myambulaciaparamedico.Dto.ClinicaDto;
+import com.example.admin_sena.myambulaciaparamedico.actividades.LoginActivity;
 import com.example.admin_sena.myambulaciaparamedico.rutas.DirectionFinder;
 import com.example.admin_sena.myambulaciaparamedico.rutas.PasarUbicacion;
 import com.example.admin_sena.myambulaciaparamedico.rutas.Route;
@@ -232,10 +233,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onStop() {
         // TODO Auto-generated method stub
 
-
         unregisterReceiver(myReceiver);
         //unregisterReceiver(receiverSignalR);
-        finish();
         super.onStop();
     }
 
@@ -383,8 +382,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         clinicaReal = clinicaAsignada;
-                        reference.child("Clinicas").child(clinicaReal.getNombre()).setValue(clinicaReal);
-                        reference.child("Clinicas").child(clinicaReal.getNombre()).child("idPedido").setValue(idPaciente);
+                        //reference.child("Clinicas").child(clinicaReal.getNombre()).setValue(clinicaReal);
+                        ClinicaDto pedidoClinica = new ClinicaDto(idAmbulancia, idPaciente, clinicaReal.getUbicacion().getLongitude(), clinicaReal.getUbicacion().getLatitude());
+                        reference.child("Clinicas").child(clinicaReal.getNombre()).child("Pedidos").child(idPaciente).setValue(pedidoClinica);
                         reference.child("Pedidos").child("Pedido:" + idPaciente).child("clinicaReal").setValue(clinicaReal.getNombre());
                         clinicaLocation = clinicaAsignada.getUbicacion();
                         startTimer();
@@ -440,16 +440,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setNeutralButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                reference.child("Clinicas").child(clinicaReal.getNombre()).setValue(clinicaReal);
-                reference.child("Clinicas").child(clinicaReal.getNombre()).child("idPedido").setValue(idPaciente);
+//
+//   reference.child("Clinicas").child(clinicaReal.getNombre()).setValue(clinicaReal);
+                ClinicaDto pedidoClinica = new ClinicaDto(idAmbulancia, idPaciente, clinicaReal.getUbicacion().getLongitude(), clinicaReal.getUbicacion().getLatitude());
+                reference.child("Clinicas").child(clinicaReal.getNombre()).child("Pedidos").child(idPaciente).setValue(pedidoClinica);
                 reference.child("Pedidos").child("Pedido:" + idPaciente).child("clinicaReal").setValue(clinicaReal.getNombre());
 
                 dialogInterface.dismiss();
             }
         });
         builder.create().show();
-
-
     }
 
     public void startTimer() {
@@ -487,10 +487,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-
     @Override
     protected void onDestroy() {
         stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
+        database.goOffline();
         super.onDestroy();
     }
 }
