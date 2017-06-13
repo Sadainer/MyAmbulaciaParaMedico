@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
     Button login, Registrar;
     LoginDto loginDto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                     });
             builder.show();
         }
-
 
        Registrar.setOnClickListener(new OnClickListener() {
            @Override
@@ -164,14 +164,11 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor e = registro.edit();
                 if(!(output.equals("ErrorA"))){     //////////Si no hay errores////////
                     /////Convertir Json a LoginDto
-                    LoginDto loginExitoso = loginjson.fromJson(output, LoginDto.class);
-                    //Asignar Id
-                    String IdRecibido = loginExitoso.getCedula();
+                    Log.e("Login output", output);
                     //Asignar Contraseña
-                    String Pass = loginExitoso.getPassword();
+
                     //Guardarlas en Sharedpreferences
-                    editor.putString("IdAmbulancia",IdRecibido).putString("Password",Pass).putBoolean("ImLoggedIn", true);
-                    editor.apply();
+                    editor.putString("IdAmbulancia",loginDto.getCedula()).putString("Password",loginDto.getPassword()).putBoolean("ImLoggedIn", true);
 
                     e.putString("Usuario",loginDto.getCedula());
                     e.apply();

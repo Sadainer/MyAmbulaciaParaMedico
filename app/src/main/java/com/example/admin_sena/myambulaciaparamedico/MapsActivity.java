@@ -185,9 +185,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (latLngAmbu != null && latLngPaciente != null){
                     DirectionFinder rutasRequest = new DirectionFinder(this, latLngAmbu, latLngPaciente);
                     rutasRequest.peticionRutas();
+
                 }else {
                     Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.opt_dibujar_ruta_clinica:
+                if (clinicaReal != null){
+                    DirectionFinder rutasRequest = new DirectionFinder(this, latLngAmbu, new LatLng(clinicaReal.getUbicacion().getLatitude(), clinicaReal.getUbicacion().getLongitude()));
+                    rutasRequest.peticionRutas();
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(clinicaReal.getUbicacion().getLatitude(),
+                                    clinicaReal.getUbicacion().getLongitude()))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.hospital)));
+                }else{
+                    Toast.makeText(MapsActivity.this, "Ninguna clínica asignada.", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
             case R.id.opt_cerrar_sesion:
                 SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
@@ -395,7 +409,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         dialogInterface.dismiss();
                         mostrarDialogSelectClinica(lista);
-
                     }
                 });
         builder.create();

@@ -9,6 +9,10 @@
         android:title="@string/st_dibujar_ruta"
         android:orderInCategory="9"
         app:showAsAction="never" />
+    <item android:id="@+id/opt_dibujar_ruta_clinica"
+        android:title="@string/st_dibujar_ruta_clinica"
+        android:orderInCategory="9"
+        app:showAsAction="never" />
     <item android:id="@+id/opt_terminar_servicio"
         android:title="@string/st_terminar_servicio"
         android:orderInCategory="9"
