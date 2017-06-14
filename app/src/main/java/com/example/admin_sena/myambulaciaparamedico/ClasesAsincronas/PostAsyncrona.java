@@ -87,5 +87,6 @@ public class PostAsyncrona extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         connection.disconnect();
         delegate.processFinish(result);
+        Log.e("postExecute","post");
     }
 }

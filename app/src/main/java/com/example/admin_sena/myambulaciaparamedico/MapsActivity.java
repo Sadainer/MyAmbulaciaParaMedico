@@ -68,7 +68,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     MyReceiver myReceiver;
     private LatLng latLngAmbu, latLngPaciente;
     FirebaseDatabase database;
-    DatabaseReference reference, pedido, ambulanciaFirebase, clinicasRef;
+    DatabaseReference reference, pedido, ambulanciaFirebase, clinicasRef, currentEmergency;
     AlertDialog dialogAceptarEm;
     Location mylocation = new Location("point a"), clinicaLocation = new Location("point b");
     SimpleDateFormat sdf;
@@ -95,6 +95,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("");
+        currentEmergency = reference.child("CurrentEmergency");
+
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         builder
                 .setIcon(R.drawable.ic_launcher2)
@@ -204,14 +206,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 break;
             case R.id.opt_cerrar_sesion:
-                SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("ImLoggedIn", false);
-                editor.apply();
-                stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
-                Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
-                startActivity(volver_a_login);
-                finish();
+                if (pedido != null){
+
+                    Toast.makeText(this, "Solicitud vigente, no puede cerrar sesión.", Toast.LENGTH_SHORT).show();
+                }else {
+
+                    SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean("ImLoggedIn", false);
+                    editor.apply();
+                    stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
+                    Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
+                    startActivity(volver_a_login);
+                    finish();
+                }
+
 
                 break;
             case R.id.opt_terminar_servicio:
@@ -221,7 +230,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     dibujarMarcador();
                     currentDateandTime = sdf.format(new Date());
                     reference.child("Pedidos").child("Pedido:" + idPaciente).child("tiempos").child("4").setValue(currentDateandTime);
-
+                    currentEmergency.removeValue();
                 }else {
                     Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
                 }
