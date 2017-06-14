@@ -215,6 +215,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean("ImLoggedIn", false);
                     editor.apply();
+                    currentEmergency.removeValue();
                     stopService(new Intent(MapsActivity.this, ServicioMyAmbu.class));
                     Intent volver_a_login = new Intent(MapsActivity.this, LoginActivity.class);
                     startActivity(volver_a_login);
@@ -230,7 +231,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     dibujarMarcador();
                     currentDateandTime = sdf.format(new Date());
                     reference.child("Pedidos").child("Pedido:" + idPaciente).child("tiempos").child("4").setValue(currentDateandTime);
-                    currentEmergency.removeValue();
+
                 }else {
                     Toast.makeText(MapsActivity.this, "Ningún servicio activo", Toast.LENGTH_SHORT).show();
                 }
